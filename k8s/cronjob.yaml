@@ -23,7 +23,7 @@ spec:
           
           containers:
             - name: ml-cronjob
-              image: gcr.io/simple-476608/ml-cronjob:latest
+              image: gcr.io/mlops-476802/ml-cronjob:latest
               
               # Environment variables
               env:

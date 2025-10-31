@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dbapp
-          image: gcr.io/simple-476608/dbapp:latest
+          image: gcr.io/mlops-476802/dbapp:latest
           ports:
             - containerPort: 5002
           env:

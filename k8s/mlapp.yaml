@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: mlapp
-          image: gcr.io/simple-476608/mlapp:latest
+          image: gcr.io/mlops-476802/mlapp:latest
           ports:
             - containerPort: 5001
           resources:

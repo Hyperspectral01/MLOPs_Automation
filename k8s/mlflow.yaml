@@ -21,7 +21,7 @@ spec:
       
       containers:
         - name: mlflow
-          image: gcr.io/simple-476608/mlflow-server:latest
+          image: gcr.io/mlops-476802/mlflow-server:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000

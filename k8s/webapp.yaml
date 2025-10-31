@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: webapp
-          image: gcr.io/simple-476608/webapp:latest
+          image: gcr.io/mlops-476802/webapp:latest
           ports:
             - containerPort: 5000
           resources:
