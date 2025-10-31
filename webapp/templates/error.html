@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+            word-wrap: break-word;
+        }
+        
+        .info-text {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">⚠️</div>
+        <h1>Oops! Something Went Wrong</h1>
+        <p class="info-text">We encountered an error while processing your request.</p>
+        
+        <div class="error-message">
+            <strong>Error Details:</strong><br>
+            {{ error }}
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <a href="/" class="btn btn-primary">🏠 Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

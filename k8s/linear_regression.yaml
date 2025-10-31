@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: linear-regression
+  namespace: ml
+  labels:
+    app: linear-regression
+spec:
+  backoffLimit: 2          # Retry failed jobs up to 2 times
+  template:
+    metadata:
+      labels:
+        app: linear-regression
+    spec:
+      serviceAccountName: ml-service-account
+
+      containers:
+        - name: linear-regression
+          image: gcr.io/simple-476608/linear_regression:latest
+          
+          env:
+            - name: BUCKET_2
+              valueFrom:
+                configMapKeyRef:
+                  name: confmap_1
+                  key: BUCKET_2
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+
+      restartPolicy: Never   #  ensures it doesn’t restart after finishing

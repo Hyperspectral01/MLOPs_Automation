@@ -1,0 +1,177 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: web
+  labels:
+    app: prometheus
+    component: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+        component: monitoring
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      # serviceAccountName: prometheus
+      
+      containers:
+        - name: prometheus
+          image: prom/prometheus:v2.48.0
+          
+          args:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.tsdb.path=/prometheus/'
+            - '--storage.tsdb.retention.time=15d'
+            - '--storage.tsdb.retention.size=10GB'
+            - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+            - '--web.console.templates=/usr/share/prometheus/consoles'
+            - '--web.enable-lifecycle'
+            - '--web.enable-admin-api'
+          
+          ports:
+            - name: web
+              containerPort: 9090
+              protocol: TCP
+          
+          # Resource limits and requests
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          
+          # Volume mounts
+          volumeMounts:
+            - name: prometheus-config
+              mountPath: /etc/prometheus
+              readOnly: true
+            - name: prometheus-storage
+              mountPath: /prometheus
+          
+          # Liveness probe - checks if Prometheus is running
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          
+          # Readiness probe - checks if Prometheus is ready to serve traffic
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9090
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+          
+          # Security context
+          securityContext:
+            runAsUser: 65534  # nobody user
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+      
+      # Volumes
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config
+            defaultMode: 420
+        
+        - name: prometheus-storage
+          emptyDir: {}
+          # For persistent storage, use PersistentVolumeClaim instead:
+          # persistentVolumeClaim:
+          #   claimName: prometheus-pvc
+      
+      # Restart policy
+      restartPolicy: Always
+      
+      # DNS policy
+      dnsPolicy: ClusterFirst
+      
+      # Security settings
+      securityContext:
+        fsGroup: 65534
+        runAsUser: 65534
+        runAsNonRoot: true
+
+---
+# Service Account for Prometheus (required for Kubernetes API access)
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: prometheus
+#   namespace: web
+
+---
+# ClusterRole for Prometheus to access Kubernetes API
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRole
+# metadata:
+#   name: prometheus
+# rules:
+#   - apiGroups: [""]
+#     resources:
+#       - nodes
+#       - nodes/proxy
+#       - services
+#       - endpoints
+#       - pods
+#     verbs: ["get", "list", "watch"]
+#   - apiGroups:
+#       - extensions
+#     resources:
+#       - ingresses
+#     verbs: ["get", "list", "watch"]
+#   - nonResourceURLs: ["/metrics"]
+#     verbs: ["get"]
+
+---
+# ClusterRoleBinding for Prometheus
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: prometheus
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: ClusterRole
+#   name: prometheus
+# subjects:
+#   - kind: ServiceAccount
+#     name: prometheus
+#     namespace: web
+
+---
+# Optional: PersistentVolumeClaim for persistent storage
+# Uncomment if you want to persist Prometheus data across pod restarts
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: prometheus-pvc
+#   namespace: web
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 20Gi
+#   # storageClassName: standard  # Adjust based on your GKE storage class

@@ -1,0 +1,15 @@
+[project]
+name = "linear-regression"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10.11"
+dependencies = [
+    "google>=3.0.0",
+    "google-cloud>=0.34.0",
+    "mlflow>=3.5.1",
+    "numpy>=2.2.6",
+    "pandas>=2.3.3",
+    "pathlib>=1.0.1",
+    "scikit-learn>=1.7.2",
+]

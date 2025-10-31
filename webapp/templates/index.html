@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .btn {
+            padding: 18px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+        }
+        
+        .icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 House Price Prediction</h1>
+        <p class="subtitle">Advanced ML-powered property valuation system</p>
+        
+        <div class="button-group">
+            <a href="/predict_page" class="btn btn-primary">
+                <span class="icon">🔮</span> Predict House Price
+            </a>
+            <a href="/show_predictions" class="btn btn-secondary">
+                <span class="icon">📊</span> Show All Predictions
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+  namespace: web
+  labels:
+    app: webapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp
+          image: gcr.io/simple-476608/webapp:latest
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          env:
+            - name: ENV
+              value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp
+  namespace: web
+  labels:
+    app: webapp
+spec:
+  type: ClusterIP
+  selector:
+    app: webapp
+  ports:
+    - name: http
+      port: 80          # Exposed inside the cluster
+      targetPort: 5000  # Maps to containerPort

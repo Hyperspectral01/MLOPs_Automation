@@ -1,0 +1,78 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ml-cronjob
+  namespace: ml
+  labels:
+    app: ml-cronjob
+spec:
+  # Run every 3 hours
+  schedule: "0 */3 * * *"
+  concurrencyPolicy: Forbid          # Avoid overlapping runs
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: ml-cronjob
+        spec:
+          # Service Account (for GCS / GCP access)
+          serviceAccountName: ml-service-account
+          
+          containers:
+            - name: ml-cronjob
+              image: gcr.io/simple-476608/ml-cronjob:latest
+              
+              # Environment variables
+              env:
+                # From ConfigMap
+                - name: MONGO_DB
+                  valueFrom:
+                    configMapKeyRef:
+                      name: confmap_1
+                      key: MONGO_DB
+                - name: COLLECTION_2
+                  valueFrom:
+                    configMapKeyRef:
+                      name: confmap_1
+                      key: COLLECTION_2
+                - name: BUCKET_1
+                  valueFrom:
+                    configMapKeyRef:
+                      name: confmap_1
+                      key: BUCKET_1
+                - name: BUCKET_2
+                  valueFrom:
+                    configMapKeyRef:
+                      name: confmap_1
+                      key: BUCKET_2
+                - name: BATCH_SIZE
+                  valueFrom:
+                    configMapKeyRef:
+                      name: confmap_1
+                      key: BATCH_SIZE
+                - name: TRAIN_TEST_SPLIT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: confmap_1
+                      key: TRAIN_TEST_SPLIT
+
+                # From Secret
+                - name: MONGO_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: secrets_1
+                      key: MONGO_URI
+
+              # Resource limits (adjust as needed)
+              resources:
+                requests:
+                  cpu: "250m"
+                  memory: "512Mi"
+                limits:
+                  cpu: "1000m"
+                  memory: "1Gi"
+
+          restartPolicy: OnFailure

@@ -1,0 +1,173 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: web
+data:
+  prometheus.yml: 
+    # Prometheus Configuration for MLOps Monitoring
+    # Scrapes metrics from webapp, dbapp, and mlapp services
+    
+    global:
+      scrape_interval: 15s      # How frequently to scrape targets
+      evaluation_interval: 15s   # How frequently to evaluate rules
+      scrape_timeout: 10s        # Timeout for scraping targets
+      
+      # external_labels:
+      #   cluster: 'gcp-kubernetes'
+      #   namespace: 'web'
+    
+    # Scrape configuration for Prometheus itself
+    scrape_configs:
+      # Prometheus self-monitoring
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+            labels:
+              service: 'prometheus'
+              environment: 'production'
+      
+      # WebApp Service Metrics
+      # Tracks: HTTP requests, latency, predictions, corrections, service health
+      - job_name: 'webapp'
+        scrape_interval: 10s
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['webapp.web.svc.cluster.local:80']
+            labels:
+              service: 'webapp'
+              component: 'frontend'
+              app: 'mlops-webapp'
+        
+        # Relabel to add instance information
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: instance
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: webapp.web.svc.cluster.local:80
+      
+      # Database Service Metrics
+      # Tracks: Store/retrieve requests, latency, MongoDB health, connections
+      - job_name: 'dbapp'
+        scrape_interval: 10s
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['dbapp.web.svc.cluster.local:80']
+            labels:
+              service: 'dbapp'
+              component: 'database'
+              app: 'mlops-dbapp'
+        
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: instance
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: dbapp.web.svc.cluster.local:80
+      
+      # ML Service Metrics
+      # Tracks: Predictions, model performance, errors, latency
+      - job_name: 'mlapp'
+        scrape_interval: 10s
+        metrics_path: '/metrics'
+        static_configs:
+          - targets: ['mlapp.web.svc.cluster.local:80']
+            labels:
+              service: 'mlapp'
+              component: 'ml-inference'
+              app: 'mlops-mlapp'
+        
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: instance
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: mlapp.web.svc.cluster.local:5001
+      
+      # Kubernetes API server metrics (optional but useful)
+      # - job_name: 'kubernetes-apiservers'
+      #   kubernetes_sd_configs:
+      #     - role: endpoints
+      #       namespaces:
+      #         names:
+      #           - web
+        
+      #   scheme: https
+      #   tls_config:
+      #     ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      #   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        
+      #   relabel_configs:
+      #     - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+      #       action: keep
+      #       regex: default;kubernetes;https
+      
+      # Kubernetes nodes metrics (optional)
+      # - job_name: 'kubernetes-nodes'
+      #   kubernetes_sd_configs:
+      #     - role: node
+        
+      #   scheme: https
+      #   tls_config:
+      #     ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      #   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        
+      #   relabel_configs:
+      #     - action: labelmap
+      #       regex: __meta_kubernetes_node_label_(.+)
+      #     - target_label: __address__
+      #       replacement: kubernetes.default.svc:443
+      #     - source_labels: [__meta_kubernetes_node_name]
+      #       regex: (.+)
+      #       target_label: __metrics_path__
+      #       replacement: /api/v1/nodes/${1}/proxy/metrics
+      
+      # Kubernetes pods metrics (optional - for pod-level monitoring)
+      # - job_name: 'kubernetes-pods'
+      #   kubernetes_sd_configs:
+      #     - role: pod
+      #       namespaces:
+      #         names:
+      #           - web
+        
+      #   relabel_configs:
+      #     - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+      #       action: keep
+      #       regex: true
+      #     - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+      #       action: replace
+      #       target_label: __metrics_path__
+      #       regex: (.+)
+      #     - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+      #       action: replace
+      #       regex: ([^:]+)(?::\d+)?;(\d+)
+      #       replacement: $1:$2
+      #       target_label: __address__
+      #     - action: labelmap
+      #       regex: __meta_kubernetes_pod_label_(.+)
+      #     - source_labels: [__meta_kubernetes_namespace]
+      #       action: replace
+      #       target_label: kubernetes_namespace
+      #     - source_labels: [__meta_kubernetes_pod_name]
+      #       action: replace
+      #       target_label: kubernetes_pod_name
+    
+    # Alerting rules (optional - can be extended)
+    rule_files:
+      # - "alerts.yml"
+    
+    # Storage configuration
+    storage:
+      tsdb:
+        retention.time: 15d
+        retention.size: 10GB

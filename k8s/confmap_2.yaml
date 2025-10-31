@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: confmap_2
+  namespace: web
+data:
+  MONGO_DB: "mlops_project_database"
+  COLLECTION_1: "predictions"
+  COLLECTION_2: "corrections"

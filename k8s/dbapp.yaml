@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbapp-deployment
+  namespace: web
+  labels:
+    app: dbapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dbapp
+  template:
+    metadata:
+      labels:
+        app: dbapp
+    spec:
+      containers:
+        - name: dbapp
+          image: gcr.io/simple-476608/dbapp:latest
+          ports:
+            - containerPort: 5002
+          env:
+            # Load from ConfigMap
+            - name: MONGO_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: confmap_2
+                  key: MONGO_DB
+            - name: COLLECTION_1
+              valueFrom:
+                configMapKeyRef:
+                  name: confmap_2
+                  key: COLLECTION_1
+            - name: COLLECTION_2
+              valueFrom:
+                configMapKeyRef:
+                  name: confmap_2
+                  key: COLLECTION_2
+            # Load from Secret
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: secrets_2
+                  key: MONGO_URI
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbapp
+  namespace: web
+  labels:
+    app: dbapp
+spec:
+  type: ClusterIP
+  selector:
+    app: dbapp
+  ports:
+    - name: http
+      port: 80          # Exposed inside the cluster
+      targetPort: 5002  # Container port

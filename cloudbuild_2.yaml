@@ -1,0 +1,143 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build DB App Image
+  args:
+    [
+      'build',
+      '-t', 'gcr.io/simple-476608/dbapp:latest',
+      '.'
+    ]
+  dir: 'dbapp'
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build ML App Image
+  args:
+    [
+      'build',
+      '-t', 'gcr.io/simple-476608/mlapp:latest',
+      '.'
+    ]
+  dir: 'mlapp'
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build Web App Image
+  args:
+    [
+      'build',
+      '-t', 'gcr.io/simple-476608/webapp:latest',
+      '.'
+    ]
+  dir: 'webapp'
+
+
+# -------------------------------------------------------------
+# 2️⃣ Push images to GCR
+# -------------------------------------------------------------
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push DB App Image
+  args: ['push', 'gcr.io/simple-476608/dbapp:latest']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push ML App Image
+  args: ['push', 'gcr.io/simple-476608/mlapp:latest']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push Web App Image
+  args: ['push', 'gcr.io/simple-476608/webapp:latest']
+
+
+# -------------------------------------------------------------
+# 3️⃣ Apply Kubernetes manifests for orchestration
+# -------------------------------------------------------------
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply ConfigMap 2
+  args: ['apply', '-f', 'k8s/confmap_2.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply DB App Deployment
+  args: ['apply', '-f', 'k8s/dbapp.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply ML App Deployment
+  args: ['apply', '-f', 'k8s/mlapp.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply Web App Deployment
+  args: ['apply', '-f', 'k8s/webapp.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+# -------------------------------------------------------------
+# 4️⃣ Prometheus Monitoring Setup
+# -------------------------------------------------------------
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply Prometheus ConfigMap
+  args: ['apply', '-f', 'k8s/prometheus-configmap.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply Prometheus Deployment
+  args: ['apply', '-f', 'k8s/prometheus-deployment.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply Prometheus Service
+  args: ['apply', '-f', 'k8s/prometheus-service.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+# -------------------------------------------------------------
+# 5️⃣ Apply Ingress for public routing
+# -------------------------------------------------------------
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply Ingress
+  args: ['apply', '-f', 'k8s/ingress.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+
+# -------------------------------------------------------------
+# 6️⃣ Verify Deployment Status
+# -------------------------------------------------------------
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Verify Pods
+  args:
+    - 'get'
+    - 'pods'
+    - '--namespace=web'
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+
+# -------------------------------------------------------------
+# 🧩 Substitutions
+# -------------------------------------------------------------
+substitutions:
+  _REGION: asia-south1        # change this to your GKE region or zone
+  _CLUSTER: my-web-cluster    # change this to your actual cluster name
+
+
+# -------------------------------------------------------------
+# 💾 Image tracking (build outputs)
+# -------------------------------------------------------------
+images:
+  - 'gcr.io/simple-476608/dbapp:latest'
+  - 'gcr.io/simple-476608/mlapp:latest'
+  - 'gcr.io/simple-476608/webapp:latest'

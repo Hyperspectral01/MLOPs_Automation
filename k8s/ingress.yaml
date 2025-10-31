@@ -1,0 +1,57 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webapp-ingress
+  namespace: web
+  annotations:
+    kubernetes.io/ingress.class: "gce"          # GCP's native HTTP(S) Load Balancer
+    kubernetes.io/ingress.allow-http: "true"    # Allow HTTP traffic
+    kubernetes.io/ingress.global-static-ip-name: "webapp-ip"  # Optional: pre-reserved static IP
+spec:
+  rules:
+    - http:
+        paths:
+          # Root page
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: webapp
+                port:
+                  number: 80
+
+          # Predict page
+          - path: /predict_page
+            pathType: Prefix
+            backend:
+              service:
+                name: webapp
+                port:
+                  number: 80
+
+          # POST predict
+          - path: /predict
+            pathType: Prefix
+            backend:
+              service:
+                name: webapp
+                port:
+                  number: 80
+
+          # POST correct prediction
+          - path: /correct_prediction
+            pathType: Prefix
+            backend:
+              service:
+                name: webapp
+                port:
+                  number: 80
+
+          # Show predictions
+          - path: /show_predictions
+            pathType: Prefix
+            backend:
+              service:
+                name: webapp
+                port:
+                  number: 80

@@ -1,0 +1,6 @@
+.venv
+.python-version
+main.py
+pyproject.toml
+README.md
+uv.lock

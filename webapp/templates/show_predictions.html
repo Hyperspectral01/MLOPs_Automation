@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Predictions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .section.corrections h2 {
+            border-bottom-color: #f5576c;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: 600;
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+        }
+        
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #dee2e6;
+            color: #495057;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .price-cell {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .corrections .price-cell {
+            color: #f5576c;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-btn {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-card.corrections {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 All Predictions & Corrections</h1>
+            <p>Complete history of all property valuations</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">{{ predictions|length }}</div>
+                <div class="stat-label">Total Predictions</div>
+            </div>
+            <div class="stat-card corrections">
+                <div class="stat-number">{{ corrections|length }}</div>
+                <div class="stat-label">User Corrections</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔮 Predicted Prices (Collection 1)</h2>
+            {% if predictions %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bedrooms</th>
+                            <th>Bathrooms</th>
+                            <th>Living (sqft)</th>
+                            <th>Lot (sqft)</th>
+                            <th>Floors</th>
+                            <th>View</th>
+                            <th>Condition</th>
+                            <th>Year Built</th>
+                            <th>City</th>
+                            <th>Predicted Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pred in predictions %}
+                        <tr>
+                            <td>{{ pred.bedrooms }}</td>
+                            <td>{{ pred.bathrooms }}</td>
+                            <td>{{ "{:,}".format(pred.sqft_living) }}</td>
+                            <td>{{ "{:,}".format(pred.sqft_lot) }}</td>
+                            <td>{{ pred.floors }}</td>
+                            <td>{{ pred.view }}</td>
+                            <td>{{ pred.condition }}</td>
+                            <td>{{ pred.yr_built }}</td>
+                            <td>{{ pred.city }}</td>
+                            <td class="price-cell">${{ "{:,.2f}".format(pred.price) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">No predictions yet. Start by making your first prediction!</div>
+            {% endif %}
+        </div>
+        
+        <div class="section corrections">
+            <h2>✏️ Corrected Prices (Collection 2)</h2>
+            {% if corrections %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bedrooms</th>
+                            <th>Bathrooms</th>
+                            <th>Living (sqft)</th>
+                            <th>Lot (sqft)</th>
+                            <th>Floors</th>
+                            <th>View</th>
+                            <th>Condition</th>
+                            <th>Year Built</th>
+                            <th>City</th>
+                            <th>Corrected Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for corr in corrections %}
+                        <tr>
+                            <td>{{ corr.bedrooms }}</td>
+                            <td>{{ corr.bathrooms }}</td>
+                            <td>{{ "{:,}".format(corr.sqft_living) }}</td>
+                            <td>{{ "{:,}".format(corr.sqft_lot) }}</td>
+                            <td>{{ corr.floors }}</td>
+                            <td>{{ corr.view }}</td>
+                            <td>{{ corr.condition }}</td>
+                            <td>{{ corr.yr_built }}</td>
+                            <td>{{ corr.city }}</td>
+                            <td class="price-cell">${{ "{:,.2f}".format(corr.price) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">No corrections submitted yet.</div>
+            {% endif %}
+        </div>
+        
+        <div class="back-btn">
+            <a href="/" class="btn">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

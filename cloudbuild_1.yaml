@@ -1,0 +1,115 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build Linear Regression Image
+  args:
+    [
+      'build',
+      '-t', 'gcr.io/simple-476608/linear_regression:latest',
+      '.'
+    ]
+  dir: 'models/linear_regression'
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build Data Cronjob Image
+  args:
+    [
+      'build',
+      '-t', 'gcr.io/simple-476608/ml-cronjob:latest',
+      '.'
+    ]
+  dir: 'data_collection_and_versioning'
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build MLflow Image
+  args:
+    [
+      'build',
+      '-t', 'gcr.io/simple-476608/mlflow-server:latest',
+      '.'
+    ]
+  dir: 'mlflow'
+
+
+# -------------------------------------------------------------
+# 2️⃣ Push images to GCR
+# -------------------------------------------------------------
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push Linear Regression Image
+  args: ['push', 'gcr.io/simple-476608/linear_regression:latest']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push Data Cronjob Image
+  args: ['push', 'gcr.io/simple-476608/ml-cronjob:latest']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push MLflow Image
+  args: ['push', 'gcr.io/simple-476608/mlflow-server:latest']
+
+
+# -------------------------------------------------------------
+# 3️⃣ Apply Kubernetes manifests for orchestration
+# -------------------------------------------------------------
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply ConfigMap
+  args: ['apply', '-f', 'k8s/confmap_1.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply ServiceAccount
+  args: ['apply', '-f', 'k8s/serviceaccount.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply CronJob
+  args: ['apply', '-f', 'k8s/cronjob.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply Linear Regression Deployment
+  args: ['apply', '-f', 'k8s/linear_regression.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply MLflow Deployment
+  args: ['apply', '-f', 'k8s/mlflow.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+
+# # -------------------------------------------------------------
+# # 4️⃣ (Optional) Verify all resources
+# # -------------------------------------------------------------
+# - name: 'gcr.io/cloud-builders/kubectl'
+#   id: Verify Deployments
+#   args:
+#     - 'get'
+#     - 'pods'
+#     - '--namespace=ml'
+#   env:
+#     - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+#     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+
+# -------------------------------------------------------------
+# 🧩 Substitutions
+# -------------------------------------------------------------
+substitutions:
+  _REGION: asia-south1            # change if needed
+  _CLUSTER: my-mlops-cluster      # your GKE cluster name
+
+# -------------------------------------------------------------
+# 💾 Images (for tracking build outputs)
+# -------------------------------------------------------------
+images:
+  - 'gcr.io/simple-476608/linear_regression:latest'
+  - 'gcr.io/simple-476608/ml-cronjob:latest'
+  - 'gcr.io/simple-476608/mlflow-server:latest'

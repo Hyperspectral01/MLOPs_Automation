@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: confmap_1
+  namespace: ml
+data:
+  MONGO_DB: "mlops_project_database"
+  COLLECTION_2: "corrections"
+  BUCKET_1: ""
+  BUCKET_2: ""
+  BUCKET_3: ""
+  BATCH_SIZE: "50"
+  TRAIN_TEST_SPLIT: "0.7"
+  POSTGRESQL_URI: "postgresql://mlflowuser:mypostgresql@/mlflowdb?host=/cloudsql/simple-476608:us-central1:mlops-postgres"

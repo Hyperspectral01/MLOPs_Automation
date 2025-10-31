@@ -1,0 +1,12 @@
+[project]
+name = "webapp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10.11"
+dependencies = [
+    "flask>=3.1.2",
+    "prometheus-client>=0.23.1",
+    "requests>=2.32.5",
+    "waitress>=3.0.2",
+]

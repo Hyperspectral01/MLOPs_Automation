@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlapp-deployment
+  namespace: web
+  labels:
+    app: mlapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mlapp
+  template:
+    metadata:
+      labels:
+        app: mlapp
+    spec:
+      containers:
+        - name: mlapp
+          image: gcr.io/simple-476608/mlapp:latest
+          ports:
+            - containerPort: 5001
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "800m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlapp
+  namespace: web
+  labels:
+    app: mlapp
+spec:
+  type: ClusterIP
+  selector:
+    app: mlapp
+  ports:
+    - name: http
+      port: 80          # Cluster-level access port
+      targetPort: 5001  # Maps to the container's exposed port

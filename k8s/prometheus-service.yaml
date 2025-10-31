@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: web
+  labels:
+    app: prometheus
+    component: monitoring
+spec:
+  type: LoadBalancer
+  ports:
+    - name: web
+      port: 9090
+      targetPort: 9090
+      protocol: TCP
+  selector:
+    app: prometheus
+  sessionAffinity: None
+  
+  # Optional: Specify a static external IP if you have one reserved
+  # loadBalancerIP: "YOUR_STATIC_IP_HERE"
+  
+  # Optional: Source IP ranges that can access the LoadBalancer
+  # Uncomment and adjust for security in production
+  # loadBalancerSourceRanges:
+  #   - "0.0.0.0/0"  # Allow all (not recommended for production)
+  #   - "YOUR_IP_RANGE/32"  # Restrict to specific IPs
