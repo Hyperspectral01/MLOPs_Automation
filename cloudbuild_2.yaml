@@ -141,3 +141,6 @@ images:
   - 'gcr.io/mlops-476802/dbapp:latest'
   - 'gcr.io/mlops-476802/mlapp:latest'
   - 'gcr.io/mlops-476802/webapp:latest'
+
+options:
+ logging: CLOUD_LOGGING_ONLY
