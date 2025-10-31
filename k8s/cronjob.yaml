@@ -19,7 +19,7 @@ spec:
             app: ml-cronjob
         spec:
           # Service Account (for GCS / GCP access)
-          serviceAccountName: ml-service-account
+          serviceAccountName: ml-serviceaccount
           
           containers:
             - name: ml-cronjob
@@ -63,7 +63,7 @@ spec:
                 - name: MONGO_URI
                   valueFrom:
                     secretKeyRef:
-                      name: secrets_1
+                      name: secrets-1
                       key: MONGO_URI
 
               # Resource limits (adjust as needed)

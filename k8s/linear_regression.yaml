@@ -12,7 +12,7 @@ spec:
       labels:
         app: linear-regression
     spec:
-      serviceAccountName: ml-service-account
+      serviceAccountName: ml-serviceaccount
 
       containers:
         - name: linear-regression

@@ -6,9 +6,9 @@ metadata:
 data:
   MONGO_DB: "mlops_project_database"
   COLLECTION_2: "corrections"
-  BUCKET_1: ""
-  BUCKET_2: ""
-  BUCKET_3: ""
+  BUCKET_1: "mlops-476802-bucket-1"
+  BUCKET_2: "mlops-476802-bucket-2"
+  BUCKET_3: "mlops-476802-bucket-3"
   BATCH_SIZE: "50"
   TRAIN_TEST_SPLIT: "0.7"
-  POSTGRESQL_URI: "postgresql://mlflowuser:mypostgresql@/mlflowdb?host=/cloudsql/simple-476608:us-central1:mlops-postgres"
+  POSTGRESQL_URI: "postgresql://postgres:mypostgreysql@/postgres?host=/cloudsql/mlops-476802:us-central1:mlops-postgres"

@@ -17,7 +17,7 @@ spec:
         app: mlflow
     spec:
 
-      serviceAccountName: ml-service-account
+      serviceAccountName: ml-serviceaccount
       
       containers:
         - name: mlflow

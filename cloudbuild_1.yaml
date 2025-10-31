@@ -30,9 +30,7 @@ steps:
   dir: 'mlflow'
 
 
-# -------------------------------------------------------------
-# 2️⃣ Push images to GCR
-# -------------------------------------------------------------
+
 - name: 'gcr.io/cloud-builders/docker'
   id: Push Linear Regression Image
   args: ['push', 'gcr.io/simple-476608/linear_regression:latest']
@@ -46,9 +44,6 @@ steps:
   args: ['push', 'gcr.io/simple-476608/mlflow-server:latest']
 
 
-# -------------------------------------------------------------
-# 3️⃣ Apply Kubernetes manifests for orchestration
-# -------------------------------------------------------------
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply ConfigMap
   args: ['apply', '-f', 'k8s/confmap_1.yaml']
