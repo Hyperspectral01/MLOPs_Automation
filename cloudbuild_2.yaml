@@ -4,7 +4,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/simple-476608/dbapp:latest',
+      '-t', 'gcr.io/mlops-476802/dbapp:latest',
       '.'
     ]
   dir: 'dbapp'
@@ -14,7 +14,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/simple-476608/mlapp:latest',
+      '-t', 'gcr.io/mlops-476802/mlapp:latest',
       '.'
     ]
   dir: 'mlapp'
@@ -24,7 +24,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/simple-476608/webapp:latest',
+      '-t', 'gcr.io/mlops-476802/webapp:latest',
       '.'
     ]
   dir: 'webapp'
@@ -35,15 +35,15 @@ steps:
 # -------------------------------------------------------------
 - name: 'gcr.io/cloud-builders/docker'
   id: Push DB App Image
-  args: ['push', 'gcr.io/simple-476608/dbapp:latest']
+  args: ['push', 'gcr.io/mlops-476802/dbapp:latest']
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push ML App Image
-  args: ['push', 'gcr.io/simple-476608/mlapp:latest']
+  args: ['push', 'gcr.io/mlops-476802/mlapp:latest']
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push Web App Image
-  args: ['push', 'gcr.io/simple-476608/webapp:latest']
+  args: ['push', 'gcr.io/mlops-476802/webapp:latest']
 
 
 # -------------------------------------------------------------
@@ -138,6 +138,6 @@ substitutions:
 # 💾 Image tracking (build outputs)
 # -------------------------------------------------------------
 images:
-  - 'gcr.io/simple-476608/dbapp:latest'
-  - 'gcr.io/simple-476608/mlapp:latest'
-  - 'gcr.io/simple-476608/webapp:latest'
+  - 'gcr.io/mlops-476802/dbapp:latest'
+  - 'gcr.io/mlops-476802/mlapp:latest'
+  - 'gcr.io/mlops-476802/webapp:latest'

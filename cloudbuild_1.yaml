@@ -4,7 +4,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/simple-476608/linear_regression:latest',
+      '-t', 'gcr.io/mlops-476802/linear_regression:latest',
       '.'
     ]
   dir: 'models/linear_regression'
@@ -14,7 +14,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/simple-476608/ml-cronjob:latest',
+      '-t', 'gcr.io/mlops-476802/ml-cronjob:latest',
       '.'
     ]
   dir: 'data_collection_and_versioning'
@@ -24,7 +24,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/simple-476608/mlflow-server:latest',
+      '-t', 'gcr.io/mlops-476802/mlflow-server:latest',
       '.'
     ]
   dir: 'mlflow'
@@ -33,15 +33,15 @@ steps:
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push Linear Regression Image
-  args: ['push', 'gcr.io/simple-476608/linear_regression:latest']
+  args: ['push', 'gcr.io/mlops-476802/linear_regression:latest']
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push Data Cronjob Image
-  args: ['push', 'gcr.io/simple-476608/ml-cronjob:latest']
+  args: ['push', 'gcr.io/mlops-476802/ml-cronjob:latest']
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push MLflow Image
-  args: ['push', 'gcr.io/simple-476608/mlflow-server:latest']
+  args: ['push', 'gcr.io/mlops-476802/mlflow-server:latest']
 
 
 - name: 'gcr.io/cloud-builders/kubectl'
@@ -105,6 +105,6 @@ substitutions:
 # 💾 Images (for tracking build outputs)
 # -------------------------------------------------------------
 images:
-  - 'gcr.io/simple-476608/linear_regression:latest'
-  - 'gcr.io/simple-476608/ml-cronjob:latest'
-  - 'gcr.io/simple-476608/mlflow-server:latest'
+  - 'gcr.io/mlops-476802/linear_regression:latest'
+  - 'gcr.io/mlops-476802/ml-cronjob:latest'
+  - 'gcr.io/mlops-476802/mlflow-server:latest'
