@@ -108,3 +108,6 @@ images:
   - 'gcr.io/mlops-476802/linear_regression:latest'
   - 'gcr.io/mlops-476802/ml-cronjob:latest'
   - 'gcr.io/mlops-476802/mlflow-server:latest'
+
+options:
+ logging: CLOUD_LOGGING_ONLY
