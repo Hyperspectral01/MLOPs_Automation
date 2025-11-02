@@ -8,8 +8,8 @@ from waitress import serve
 app = Flask(__name__)
 
 # Configuration
-ML_SERVICE_URL = "http://mlapp.training.svc.cluster.local/predict"
-DB_SERVICE_URL = "http://dbapp.training.svc.cluster.local"
+ML_SERVICE_URL = "http://mlapp/predict"
+DB_SERVICE_URL = "http://dbapp"
 
 # -------------------------------
 # Prometheus Metrics Definitions
