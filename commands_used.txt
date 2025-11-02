@@ -1,0 +1,10 @@
+# Create the static IP
+gcloud compute addresses create webapp-ip --global
+
+# Verify the IP was created
+gcloud compute addresses list
+
+
+kubectl delete ingress webapp-ingress -n web
+kubectl apply -f ingress.yaml
+

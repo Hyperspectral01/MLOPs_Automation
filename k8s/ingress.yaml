@@ -8,6 +8,11 @@ metadata:
     kubernetes.io/ingress.allow-http: "true"    # Allow HTTP traffic
     kubernetes.io/ingress.global-static-ip-name: "webapp-ip"  # Optional: pre-reserved static IP
 spec:
+  defaultBackend:
+    service:
+      name: webapp
+      port:
+        number: 80
   rules:
     - http:
         paths:
