@@ -31,32 +31,32 @@ spec:
                 - name: MONGO_DB
                   valueFrom:
                     configMapKeyRef:
-                      name: confmap_1
+                      name: confmap-1
                       key: MONGO_DB
                 - name: COLLECTION_2
                   valueFrom:
                     configMapKeyRef:
-                      name: confmap_1
+                      name: confmap-1
                       key: COLLECTION_2
                 - name: BUCKET_1
                   valueFrom:
                     configMapKeyRef:
-                      name: confmap_1
+                      name: confmap-1
                       key: BUCKET_1
                 - name: BUCKET_2
                   valueFrom:
                     configMapKeyRef:
-                      name: confmap_1
+                      name: confmap-1
                       key: BUCKET_2
                 - name: BATCH_SIZE
                   valueFrom:
                     configMapKeyRef:
-                      name: confmap_1
+                      name: confmap-1
                       key: BATCH_SIZE
                 - name: TRAIN_TEST_SPLIT
                   valueFrom:
                     configMapKeyRef:
-                      name: confmap_1
+                      name: confmap-1
                       key: TRAIN_TEST_SPLIT
 
                 # From Secret

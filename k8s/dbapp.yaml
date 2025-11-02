@@ -25,17 +25,17 @@ spec:
             - name: MONGO_DB
               valueFrom:
                 configMapKeyRef:
-                  name: confmap_2
+                  name: confmap-2
                   key: MONGO_DB
             - name: COLLECTION_1
               valueFrom:
                 configMapKeyRef:
-                  name: confmap_2
+                  name: confmap-2
                   key: COLLECTION_1
             - name: COLLECTION_2
               valueFrom:
                 configMapKeyRef:
-                  name: confmap_2
+                  name: confmap-2
                   key: COLLECTION_2
             # Load from Secret
             - name: MONGO_URI

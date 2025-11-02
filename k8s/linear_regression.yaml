@@ -22,7 +22,7 @@ spec:
             - name: BUCKET_2
               valueFrom:
                 configMapKeyRef:
-                  name: confmap_1
+                  name: confmap-1
                   key: BUCKET_2
 
           resources:

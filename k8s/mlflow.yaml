@@ -29,12 +29,12 @@ spec:
             - name: MLFLOW_BACKEND_STORE_URI
               valueFrom:
                 configMapKeyRef:
-                  name: confmap_1
+                  name: confmap-1
                   key: POSTGRESQL_URI
             - name: MLFLOW_ARTIFACT_ROOT
               valueFrom:
                 configMapKeyRef:
-                  name: confmap_1
+                  name: confmap-1
                   key: BUCKET_3
           resources:
             requests:
