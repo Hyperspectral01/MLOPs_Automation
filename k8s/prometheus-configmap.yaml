@@ -4,7 +4,7 @@ metadata:
   name: prometheus-config
   namespace: web
 data:
-  prometheus.yml: 
+  prometheus.yml: |
     # Prometheus Configuration for MLOps Monitoring
     # Scrapes metrics from webapp, dbapp, and mlapp services
     
