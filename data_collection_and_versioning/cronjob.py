@@ -286,7 +286,7 @@ def main():
     new_valid_df = shuffled_df[train_size:]
     print(f"New train: {len(new_train_df)} rows, New valid: {len(new_valid_df)} rows")
     
-    # Step 7: Merge with existing train/valid data
+    # Step 7: Merge with existing train/valid data.
     print("\n[Step 7] Merging with existing train/valid data...")
     if not train1_df.empty:
         final_train_df = pd.concat([train1_df, new_train_df], ignore_index=True)
