@@ -98,8 +98,8 @@ steps:
 # 🧩 Substitutions
 # -------------------------------------------------------------
 substitutions:
-  _REGION: asia-south1            # change if needed
-  _CLUSTER: my-mlops-cluster      # your GKE cluster name
+  _REGION: us-central1-a            # change if needed
+  _CLUSTER: mlops-cluster      # your GKE cluster name
 
 # -------------------------------------------------------------
 # 💾 Images (for tracking build outputs)

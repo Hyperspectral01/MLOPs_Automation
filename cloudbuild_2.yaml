@@ -130,8 +130,8 @@ steps:
 # 🧩 Substitutions
 # -------------------------------------------------------------
 substitutions:
-  _REGION: asia-south1        # change this to your GKE region or zone
-  _CLUSTER: my-web-cluster    # change this to your actual cluster name
+  _REGION: us-central1-a        # change this to your GKE region or zone
+  _CLUSTER: mlops-cluster    # change this to your actual cluster name
 
 
 # -------------------------------------------------------------
