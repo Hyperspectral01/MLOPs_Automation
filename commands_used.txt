@@ -8,3 +8,29 @@ gcloud compute addresses list
 kubectl delete ingress webapp-ingress -n web
 kubectl apply -f ingress.yaml
 
+
+#########Since ingress is not exactly a pod
+You should do :
+kubectl describe ingress webapp-ingress -n web
+
+to get the details of the public ip alright?
+
+
+
+BASIC_COMMANDS:
+
+kubectl get nodes
+
+gcloud container node-pools list --cluster=mlops-cluster --region=us-central1-a
+
+kubectl get pods -n web
+
+kubectl get pods -n ml
+
+kubectl describe pod mlapp-deployment-8f5c59ff4-lxmld -n web  # to get the logs inside a pod
+
+kubectl logs mlapp-deployment-8f5c59ff4-4gdhd -n web
+
+kubectl get svc -A -o wide  #to get all the pods
+
+kubectl describe ingress webapp-ingress -n web #to get the pulic ip of ingress
