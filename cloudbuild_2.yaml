@@ -1,4 +1,12 @@
 steps:
+- name: 'ubuntu'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      echo "DEBUG: REGION=$_REGION"
+      echo "DEBUG: CLUSTER=$_CLUSTER"
+
 - name: 'gcr.io/cloud-builders/docker'
   id: Build DB App Image
   args:
@@ -53,28 +61,28 @@ steps:
   id: Apply ConfigMap 2
   args: ['apply', '-f', 'k8s/confmap_2.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply DB App Deployment
   args: ['apply', '-f', 'k8s/dbapp.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply ML App Deployment
   args: ['apply', '-f', 'k8s/mlapp.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Web App Deployment
   args: ['apply', '-f', 'k8s/webapp.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 # -------------------------------------------------------------
@@ -84,21 +92,21 @@ steps:
   id: Apply Prometheus ConfigMap
   args: ['apply', '-f', 'k8s/prometheus-configmap.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Prometheus Deployment
   args: ['apply', '-f', 'k8s/prometheus-deployment.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Prometheus Service
   args: ['apply', '-f', 'k8s/prometheus-service.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 # -------------------------------------------------------------
@@ -108,7 +116,7 @@ steps:
   id: Apply Ingress
   args: ['apply', '-f', 'k8s/ingress.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 
@@ -122,7 +130,7 @@ steps:
     - 'pods'
     - '--namespace=web'
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 

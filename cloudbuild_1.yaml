@@ -1,4 +1,12 @@
 steps:
+- name: 'ubuntu'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      echo "DEBUG: REGION=$_REGION"
+      echo "DEBUG: CLUSTER=$_CLUSTER"
+      
 - name: 'gcr.io/cloud-builders/docker'
   id: Build Linear Regression Image
   args:
@@ -48,35 +56,35 @@ steps:
   id: Apply ConfigMap
   args: ['apply', '-f', 'k8s/confmap_1.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply ServiceAccount
   args: ['apply', '-f', 'k8s/serviceaccount.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply CronJob
   args: ['apply', '-f', 'k8s/cronjob.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Linear Regression Deployment
   args: ['apply', '-f', 'k8s/linear_regression.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply MLflow Deployment
   args: ['apply', '-f', 'k8s/mlflow.yaml']
   env:
-    - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 
@@ -90,7 +98,7 @@ steps:
 #     - 'pods'
 #     - '--namespace=ml'
 #   env:
-#     - 'CLOUDSDK_COMPUTE_REGION=$_REGION'
+#     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
 #     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 
