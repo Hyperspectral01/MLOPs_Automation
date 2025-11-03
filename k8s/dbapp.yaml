@@ -18,6 +18,7 @@ spec:
       containers:
         - name: dbapp
           image: gcr.io/mlops-476802/dbapp:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5002
           env:

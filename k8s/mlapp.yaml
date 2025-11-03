@@ -18,6 +18,7 @@ spec:
       containers:
         - name: mlapp
           image: gcr.io/mlops-476802/mlapp:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5001
           resources:

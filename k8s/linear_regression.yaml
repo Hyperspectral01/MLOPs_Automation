@@ -17,7 +17,7 @@ spec:
       containers:
         - name: linear-regression
           image: gcr.io/simple-476608/linear_regression:latest
-          
+          imagePullPolicy: Always
           env:
             - name: BUCKET_2
               valueFrom:

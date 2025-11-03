@@ -24,7 +24,7 @@ spec:
           containers:
             - name: ml-cronjob
               image: gcr.io/mlops-476802/ml-cronjob:latest
-              
+              imagePullPolicy: Always
               # Environment variables
               env:
                 # From ConfigMap

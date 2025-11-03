@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 # Configuration
 ML_SERVICE_URL = "http://mlapp/predict"
-DB_SERVICE_URL = "http://dbapp.web.svc.cluster.local"
+DB_SERVICE_URL = "http://dbapp"
 
 # -------------------------------
 # Prometheus Metrics Definitions

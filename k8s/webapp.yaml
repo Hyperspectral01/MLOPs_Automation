@@ -18,6 +18,7 @@ spec:
       containers:
         - name: webapp
           image: gcr.io/mlops-476802/webapp:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           resources:

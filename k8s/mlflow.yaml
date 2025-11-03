@@ -22,6 +22,7 @@ spec:
       containers:
         - name: cloud-sql-proxy
           image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.0
+          imagePullPolicy: Always
           command:
             - "/cloud-sql-proxy"
             - "mlops-476802:us-central1:mlops-postgres"
@@ -29,7 +30,7 @@ spec:
 
         - name: mlflow
           image: gcr.io/mlops-476802/mlflow-server:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 5000
           env:
