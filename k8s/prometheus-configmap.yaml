@@ -37,7 +37,7 @@ data:
             labels:
               service: 'webapp'
               component: 'frontend'
-              app: 'mlops-webapp'
+              app: 'webapp'
         
         # Relabel to add instance information
         relabel_configs:
@@ -48,7 +48,6 @@ data:
           - source_labels: [__param_target]
             target_label: instance
           - target_label: __address__
-            replacement: webapp.web.svc.cluster.local:80
       
       # Database Service Metrics
       # Tracks: Store/retrieve requests, latency, MongoDB health, connections
@@ -60,7 +59,7 @@ data:
             labels:
               service: 'dbapp'
               component: 'database'
-              app: 'mlops-dbapp'
+              app: 'dbapp'
         
         relabel_configs:
           - source_labels: [__address__]
@@ -70,7 +69,6 @@ data:
           - source_labels: [__param_target]
             target_label: instance
           - target_label: __address__
-            replacement: dbapp.web.svc.cluster.local:80
       
       # ML Service Metrics
       # Tracks: Predictions, model performance, errors, latency
@@ -82,7 +80,7 @@ data:
             labels:
               service: 'mlapp'
               component: 'ml-inference'
-              app: 'mlops-mlapp'
+              app: 'mlapp'
         
         relabel_configs:
           - source_labels: [__address__]
@@ -92,7 +90,6 @@ data:
           - source_labels: [__param_target]
             target_label: instance
           - target_label: __address__
-            replacement: mlapp.web.svc.cluster.local:5001
       
       # Kubernetes API server metrics (optional but useful)
       # - job_name: 'kubernetes-apiservers'
