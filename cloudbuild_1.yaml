@@ -74,19 +74,19 @@ steps:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: Apply CronJob
-  entrypoint: 'bash'
+# Step 3: Update CronJob image (add this here)
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Update ML Cronjob Image
   args:
-    - '-c'
-    - |
-      apt-get update && apt-get install -y gettext-base
-      export SHORT_SHA="$SHORT_SHA"  # ✅ Quote it
-      echo "Using SHORT_SHA: $SHORT_SHA"  # Debug line
-      envsubst < k8s/cronjob.yaml | kubectl apply -f -
+  - 'set'
+  - 'image'
+  - 'cronjob/ml-cronjob'
+  - 'ml-cronjob=gcr.io/mlops-476802/ml-cronjob:${SHORT_SHA}'
+  - '-n'
+  - 'ml'
   env:
-    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+  - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Delete prvious Linear Regression Job

@@ -36,12 +36,10 @@ spec:
                 configMapKeyRef:
                   name: confmap-1
                   key: BUCKET_3
-            - name: MLFLOW_ALLOW_ALL_HOSTS
-              value: "true"
-            - name: MLFLOW_HOST
-              value: "0.0.0.0"
-            - name: GUNICORN_CMD_ARGS
-              value: "--timeout 120 --workers 2"
+            - name: WERKZEUG_DEBUG
+              value: "false"
+            - name: FLASK_ENV
+              value: "production"
           resources:
             requests:
               memory: "128Mi"
