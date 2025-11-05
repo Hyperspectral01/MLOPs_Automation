@@ -39,6 +39,10 @@ steps:
 
 
 
+  #######################################################################################################
+
+
+
 - name: 'gcr.io/cloud-builders/docker'
   id: Push Linear Regression Image
   args: ['push', 'gcr.io/mlops-476802/linear_regression:$SHORT_SHA']
@@ -50,6 +54,10 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Push MLflow Image
   args: ['push', 'gcr.io/mlops-476802/mlflow-server:$SHORT_SHA']
+
+
+
+  ########################################################################################################################
 
 
 - name: 'gcr.io/cloud-builders/kubectl'
@@ -73,7 +81,8 @@ steps:
     - '-c'
     - |
       apt-get update && apt-get install -y gettext-base
-      export SHORT_SHA=$SHORT_SHA
+      export SHORT_SHA="$SHORT_SHA"  # ✅ Quote it
+      echo "Using SHORT_SHA: $SHORT_SHA"  # Debug line
       envsubst < k8s/cronjob.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
