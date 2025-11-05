@@ -19,11 +19,11 @@ spec:
             app: ml-cronjob
         spec:
           # Service Account (for GCS / GCP access)
-          serviceAccountName: ml-serviceaccount
+          serviceAccountName: ml-service-account
           
           containers:
             - name: ml-cronjob
-              image: gcr.io/mlops-476802/ml-cronjob:latest
+              image: gcr.io/mlops-476802/ml-cronjob:$SHORT_SHA
               imagePullPolicy: Always
               # Environment variables
               env:

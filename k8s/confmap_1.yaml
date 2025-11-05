@@ -8,7 +8,7 @@ data:
   COLLECTION_2: "corrections"
   BUCKET_1: "mlops-476802-bucket-1"
   BUCKET_2: "mlops-476802-bucket-2"
-  BUCKET_3: "mlops-476802-bucket-3"
+  BUCKET_3: "gs://mlops-476802-bucket-3" #Since this is getting used in the mlflow server for artifact root
   BATCH_SIZE: "50"
   TRAIN_TEST_SPLIT: "0.7"
-  POSTGRESQL_URI: "postgresql://postgres:mypostgreysql@/postgres?host=/cloudsql/mlops-476802:us-central1:mlops-postgres"
+  POSTGRESQL_URI: "postgresql://mlflow_user:mypostgresql@10.72.0.3:5432/mlflowdb"

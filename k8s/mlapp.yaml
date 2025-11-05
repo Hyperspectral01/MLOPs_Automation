@@ -17,17 +17,17 @@ spec:
     spec:
       containers:
         - name: mlapp
-          image: gcr.io/mlops-476802/mlapp:latest
+          image: gcr.io/mlops-476802/mlapp:$SHORT_SHA
           imagePullPolicy: Always
           ports:
             - containerPort: 5001
           resources:
             requests:
-              cpu: "200m"
-              memory: "256Mi"
-            limits:
-              cpu: "800m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "128Mi"
+            # limits:
+            #   cpu: "300m"
+            #   memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service

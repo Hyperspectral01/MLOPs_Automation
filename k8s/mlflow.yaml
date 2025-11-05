@@ -17,48 +17,32 @@ spec:
         app: mlflow
     spec:
 
-      serviceAccountName: ml-serviceaccount
+      serviceAccountName: ml-service-account
       
       containers:
-        - name: cloud-sql-proxy
-          image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.0
-          imagePullPolicy: Always
-          command:
-            - "/cloud-sql-proxy"
-            - "mlops-476802:us-central1:mlops-postgres"
-          # No credentials needed since using workload identity
-
         - name: mlflow
-          image: gcr.io/mlops-476802/mlflow-server:latest
+          image: gcr.io/mlops-476802/mlflow-server:$SHORT_SHA
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
           env:
             - name: MLFLOW_BACKEND_STORE_URI
               valueFrom:
-                configMapKeyRef:
-                  name: confmap-1
+                secretKeyRef:
+                  name: secrets-1
                   key: POSTGRESQL_URI
             - name: MLFLOW_ARTIFACT_ROOT
-              value: "gs://$(BUCKET_3)"  # Changed to proper GCS format
-            - name: BUCKET_3
               valueFrom:
                 configMapKeyRef:
                   name: confmap-1
                   key: BUCKET_3
-          volumeMounts:
-            - name: cloudsql
-              mountPath: /cloudsql
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "1Gi"
-              cpu: "1"
-      volumes:
-        - name: cloudsql
-          emptyDir: {}
+              memory: "128Mi"
+              cpu: "100m"
+            # limits:
+            #   memory: "256Mi"
+            #   cpu: "300m"
 ---
 apiVersion: v1
 kind: Service

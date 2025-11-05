@@ -12,11 +12,11 @@ spec:
       labels:
         app: linear-regression
     spec:
-      serviceAccountName: ml-serviceaccount
+      serviceAccountName: ml-service-account
 
       containers:
         - name: linear-regression
-          image: gcr.io/simple-476608/linear_regression:latest
+          image: gcr.io/mlops-476802/linear_regression:$SHORT_SHA
           imagePullPolicy: Always
           env:
             - name: BUCKET_2

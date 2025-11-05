@@ -167,7 +167,7 @@ data:
       # - "alerts.yml"
     
     # Storage configuration
-    storage:
-      tsdb:
-        retention.time: 15d
-        retention.size: 10GB
+    # storage:
+    #   tsdb:
+    #     retention.time: 15d
+    #     retention.size: 10GB

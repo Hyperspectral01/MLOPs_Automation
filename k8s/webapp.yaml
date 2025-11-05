@@ -17,20 +17,19 @@ spec:
     spec:
       containers:
         - name: webapp
-          image: gcr.io/mlops-476802/webapp:latest
+          image: gcr.io/mlops-476802/webapp:$SHORT_SHA
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "256Mi"
-          env:
-            - name: ENV
-              value: "production"
+              cpu: "50m"
+              memory: "64Mi"
+            # limits:
+            #   cpu: "150m"
+          # env:
+          #   - name: ENV
+          #     value: "production"
 ---
 apiVersion: v1
 kind: Service

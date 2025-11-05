@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: dbapp
-          image: gcr.io/mlops-476802/dbapp:latest
+          image: gcr.io/mlops-476802/dbapp:$SHORT_SHA
           imagePullPolicy: Always
           ports:
             - containerPort: 5002
@@ -46,11 +46,11 @@ spec:
                   key: MONGO_URI
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "256Mi"
+              cpu: "50m"    # Reduced from 100m
+              memory: "64Mi" # Reduced from 128Mi
+            # limits:
+            #   cpu: "200m"    # Reduced from 500m
+            #   memory: "128Mi" # Reduced from 256Mi
 ---
 apiVersion: v1
 kind: Service

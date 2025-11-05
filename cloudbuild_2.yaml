@@ -12,7 +12,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/mlops-476802/dbapp:latest',
+      '-t', 'gcr.io/mlops-476802/dbapp:$SHORT_SHA',
       '.'
     ]
   dir: 'dbapp'
@@ -22,7 +22,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/mlops-476802/mlapp:latest',
+      '-t', 'gcr.io/mlops-476802/mlapp:$SHORT_SHA',
       '.'
     ]
   dir: 'mlapp'
@@ -32,7 +32,7 @@ steps:
   args:
     [
       'build',
-      '-t', 'gcr.io/mlops-476802/webapp:latest',
+      '-t', 'gcr.io/mlops-476802/webapp:$SHORT_SHA',
       '.'
     ]
   dir: 'webapp'
@@ -43,15 +43,15 @@ steps:
 # -------------------------------------------------------------
 - name: 'gcr.io/cloud-builders/docker'
   id: Push DB App Image
-  args: ['push', 'gcr.io/mlops-476802/dbapp:latest']
+  args: ['push', 'gcr.io/mlops-476802/dbapp:$SHORT_SHA']
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push ML App Image
-  args: ['push', 'gcr.io/mlops-476802/mlapp:latest']
+  args: ['push', 'gcr.io/mlops-476802/mlapp:$SHORT_SHA']
 
 - name: 'gcr.io/cloud-builders/docker'
   id: Push Web App Image
-  args: ['push', 'gcr.io/mlops-476802/webapp:latest']
+  args: ['push', 'gcr.io/mlops-476802/webapp:$SHORT_SHA']
 
 
 # -------------------------------------------------------------
@@ -146,9 +146,9 @@ substitutions:
 # 💾 Image tracking (build outputs)
 # -------------------------------------------------------------
 images:
-  - 'gcr.io/mlops-476802/dbapp:latest'
-  - 'gcr.io/mlops-476802/mlapp:latest'
-  - 'gcr.io/mlops-476802/webapp:latest'
+  - 'gcr.io/mlops-476802/dbapp:$SHORT_SHA'
+  - 'gcr.io/mlops-476802/mlapp:$SHORT_SHA'
+  - 'gcr.io/mlops-476802/webapp:$SHORT_SHA'
 
 options:
  logging: CLOUD_LOGGING_ONLY

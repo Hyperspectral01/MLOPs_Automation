@@ -45,11 +45,11 @@ spec:
           # Resource limits and requests
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
+              cpu: "100m"
+              memory: "256Mi"
             limits:
-              memory: "2Gi"
-              cpu: "1000m"
+              cpu: "200m"
+              memory: "512Mi"
           
           # Volume mounts
           volumeMounts:
