@@ -358,9 +358,19 @@ def main():
     
     # Step 6: Load versioned data
     print(f"\n[Step 6] Loading training data...")
-    merged_train, merged_valid = load_versioned_data(
-        BUCKET_2, start_version, latest_version
-    )
+    try:
+        merged_train, merged_valid = load_versioned_data(
+            BUCKET_2, start_version, latest_version
+        )
+    except ValueError as e:
+        print(f"ERROR: {e}")
+        return
+    
+    # Validate data shape and contents
+    if len(merged_train) == 0 or len(merged_valid) == 0:
+        print("\n[ERROR] Loaded data is empty")
+        print("Training cannot proceed with empty datasets")
+        return  # Exit gracefully
     
     # Verify data format (should be 53 columns: 52 features + 1 price)
     print(f"\nData validation:")
