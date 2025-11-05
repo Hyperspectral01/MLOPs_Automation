@@ -36,6 +36,8 @@ spec:
                 configMapKeyRef:
                   name: confmap-1
                   key: BUCKET_3
+            - name: MLFLOW_ALLOW_ALL_HOSTS
+              value: "true"
           resources:
             requests:
               memory: "128Mi"
