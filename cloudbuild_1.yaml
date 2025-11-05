@@ -128,6 +128,14 @@ steps:
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Apply mlflow-ingress
+  args: ['apply', '-f', 'k8s/mlflow-ingress.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+
 # # -------------------------------------------------------------
 # # 4️⃣ (Optional) Verify all resources
 # # -------------------------------------------------------------
