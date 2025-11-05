@@ -213,8 +213,8 @@ def predict():
         data = request.json
         
         if not data:
-            prediction_errors.inc(labels={'error_type': 'no_data', 'experiment': experiment_name or 'unknown'})
-            prediction_counter.inc(labels={'status': 'error', 'experiment': experiment_name or 'unknown'})
+            prediction_errors.labels(error_type='no_data', experiment=experiment_name or 'unknown').inc()
+            prediction_counter.labels(status='error', experiment=experiment_name or 'unknown').inc()
             active_requests.dec()
             return jsonify({'error': 'No data provided'}), 400
         
@@ -229,8 +229,8 @@ def predict():
         required_fields = NUMERICAL_COLS + CATEGORICAL_COLS
         missing_fields = [field for field in required_fields if field not in data]
         if missing_fields:
-            prediction_errors.inc(labels={'error_type': 'missing_fields', 'experiment': experiment_name or 'unknown'})
-            prediction_counter.inc(labels={'status': 'error', 'experiment': experiment_name or 'unknown'})
+            prediction_errors.labels(error_type='missing_fields', experiment=experiment_name or 'unknown').inc()
+            prediction_counter.labels(status='error', experiment=experiment_name or 'unknown').inc()
             active_requests.dec()
             return jsonify({
                 'error': f'Missing required fields: {missing_fields}'
@@ -288,7 +288,7 @@ def predict():
         # Update metrics
         duration = time.time() - start_time
         prediction_duration.labels(experiment=experiment_name or 'unknown').observe(duration)
-        prediction_counter.inc(labels={'status': 'success', 'experiment': experiment_name or 'unknown'})
+        prediction_counter.labels(status='success', experiment=experiment_name or 'unknown').inc()
         predicted_price_histogram.observe(predicted_price)
         last_prediction_time.set(time.time())
         active_requests.dec()
@@ -303,8 +303,8 @@ def predict():
     except Exception as e:
         duration = time.time() - start_time
         prediction_duration.labels(experiment=experiment_name or 'unknown').observe(duration)
-        prediction_errors.inc(labels={'error_type': 'processing_error', 'experiment': experiment_name or 'unknown'})
-        prediction_counter.inc(labels={'status': 'error', 'experiment': experiment_name or 'unknown'})
+        prediction_errors.labels(error_type='processing_error', experiment=experiment_name or 'unknown').inc()
+        prediction_counter.labels(status='error', experiment=experiment_name or 'unknown').inc()
         active_requests.dec()
         
         print(f"Error during prediction: {e}")
