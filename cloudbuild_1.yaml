@@ -74,6 +74,15 @@ steps:
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
+  id: Delete prvious Linear Regression Job
+  args:
+    - 'delete'
+    - 'job'
+    - 'linear-regression'
+    - '--namespace=ml'
+    - '--ignore-not-found=true'
+
+- name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Linear Regression Deployment
   args: ['apply', '-f', 'k8s/linear_regression.yaml']
   env:
