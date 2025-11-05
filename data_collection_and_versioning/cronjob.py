@@ -27,7 +27,7 @@ import io
 import re
 from typing import Optional, Tuple
 
-# Environment variables
+# Environment variabless
 MONGO_URI = os.getenv("MONGO_URI")
 MONGO_DB = os.getenv("MONGO_DB")
 COLLECTION_2 = os.getenv("COLLECTION_2")

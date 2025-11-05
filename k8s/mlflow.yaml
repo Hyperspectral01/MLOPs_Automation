@@ -38,6 +38,8 @@ spec:
                   key: BUCKET_3
             - name: WERKZEUG_DEBUG
               value: "false"
+            - name: MLFLOW_DISABLE_HOST_CHECK
+              value: "true"
             - name: FLASK_ENV
               value: "production"
           resources:
