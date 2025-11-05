@@ -42,6 +42,8 @@ spec:
               value: "true"
             - name: FLASK_ENV
               value: "production"
+            - name: GUNICORN_CMD_ARGS
+              value: "--timeout 120 --workers 2 --forwarded-allow-ips='*'"
           resources:
             requests:
               memory: "128Mi"

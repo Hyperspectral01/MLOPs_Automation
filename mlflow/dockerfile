@@ -2,30 +2,13 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir mlflow psycopg2-binary boto3 gunicorn
-
-# Create a Python wrapper that initializes MLflow properly
-RUN echo 'import os\n\
-from mlflow.server import app\n\
-\n\
-# MLflow reads these env vars on import\n\
-# They are set by Kubernetes, just ensure they are used\n\
-backend_store = os.getenv("MLFLOW_BACKEND_STORE_URI")\n\
-artifact_root = os.getenv("MLFLOW_ARTIFACT_ROOT")\n\
-\n\
-if not backend_store or not artifact_root:\n\
-    raise ValueError("MLFLOW_BACKEND_STORE_URI and MLFLOW_ARTIFACT_ROOT must be set")\n\
-\n\
-print(f"Starting MLflow with backend: {backend_store}")\n\
-print(f"Artifact root: {artifact_root}")\n' > /app/mlflow_app.py
+RUN pip install --no-cache-dir mlflow psycopg2-binary boto3
 
 EXPOSE 5000
 
-CMD ["gunicorn", \
-     "--bind", "0.0.0.0:5000", \
-     "--workers", "2", \
-     "--timeout", "120", \
-     "--forwarded-allow-ips", "*", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-", \
-     "mlflow_app:app"]
+# Command: start the MLflow tracking server using env vars
+CMD ["sh", "-c", "mlflow server \
+    --backend-store-uri ${MLFLOW_BACKEND_STORE_URI} \
+    --default-artifact-root ${MLFLOW_ARTIFACT_ROOT} \
+    --host 0.0.0.0 \
+    --port 5000"]
