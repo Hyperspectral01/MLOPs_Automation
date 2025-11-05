@@ -64,23 +64,41 @@ steps:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'gcr.io/cloud-builders/gcloud'
   id: Apply DB App Deployment
-  args: ['apply', '-f', 'k8s/dbapp.yaml']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      apt-get update && apt-get install -y gettext-base
+      export SHORT_SHA=$SHORT_SHA
+      envsubst < k8s/dbapp.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'gcr.io/cloud-builders/gcloud'
   id: Apply ML App Deployment
-  args: ['apply', '-f', 'k8s/mlapp.yaml']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      apt-get update && apt-get install -y gettext-base
+      export SHORT_SHA=$SHORT_SHA
+      envsubst < k8s/mlapp.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'gcr.io/cloud-builders/gcloud'
   id: Apply Web App Deployment
-  args: ['apply', '-f', 'k8s/webapp.yaml']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      apt-get update && apt-get install -y gettext-base
+      export SHORT_SHA=$SHORT_SHA
+      envsubst < k8s/webapp.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'

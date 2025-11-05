@@ -66,9 +66,15 @@ steps:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'gcr.io/cloud-builders/gcloud'
   id: Apply CronJob
-  args: ['apply', '-f', 'k8s/cronjob.yaml']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      apt-get update && apt-get install -y gettext-base
+      export SHORT_SHA=$SHORT_SHA
+      envsubst < k8s/cronjob.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
@@ -85,16 +91,28 @@ steps:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'gcr.io/cloud-builders/gcloud'
   id: Apply Linear Regression Deployment
-  args: ['apply', '-f', 'k8s/linear_regression.yaml']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      apt-get update && apt-get install -y gettext-base
+      export SHORT_SHA=$SHORT_SHA
+      envsubst < k8s/linear_regression.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'gcr.io/cloud-builders/gcloud'
   id: Apply MLflow Deployment
-  args: ['apply', '-f', 'k8s/mlflow.yaml']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      apt-get update && apt-get install -y gettext-base
+      export SHORT_SHA=$SHORT_SHA
+      envsubst < k8s/mlflow.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
