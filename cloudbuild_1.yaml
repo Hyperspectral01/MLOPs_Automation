@@ -1,171 +1,139 @@
 steps:
-  - name: 'ubuntu'
-    entrypoint: 'bash'
+  - name: ubuntu
+    entrypoint: bash
     args:
       - '-c'
       - |
         echo "DEBUG: REGION=$_REGION"
         echo "DEBUG: CLUSTER=$_CLUSTER"
-
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: gcr.io/cloud-builders/docker
     id: Build Linear Regression Image
+    dir: models/linear_regression
     args:
-      [
-        'build',
-        '-t', 'gcr.io/mlops-476802/linear_regression:$SHORT_SHA',
-        '.'
-      ]
-    dir: 'models/linear_regression'
-
-  # new_fix
-  - name: 'gcr.io/cloud-builders/docker'
+      - build
+      - '-t'
+      - 'gcr.io/mlops-476802/linear_regression:$SHORT_SHA'
+      - .
+  - name: gcr.io/cloud-builders/docker
     id: Build Data Cronjob Image
+    dir: data_collection_and_versioning
     args:
-      [
-        'build',
-        '-t', 'gcr.io/mlops-476802/ml-cronjob:$SHORT_SHA',
-        '.'
-      ]
-    dir: 'data_collection_and_versioning'
-
-  - name: 'gcr.io/cloud-builders/docker'
+      - build
+      - '-t'
+      - 'gcr.io/mlops-476802/ml-cronjob:$SHORT_SHA'
+      - .
+  - name: gcr.io/cloud-builders/docker
     id: Build MLflow Image
+    dir: mlflow
     args:
-      [
-        'build',
-        '-t', 'gcr.io/mlops-476802/mlflow-server:$SHORT_SHA',
-        '.'
-      ]
-    dir: 'mlflow'
-
-
-
-    #######################################################################################################
-
-
-
-  - name: 'gcr.io/cloud-builders/docker'
+      - build
+      - '-t'
+      - 'gcr.io/mlops-476802/mlflow-server:$SHORT_SHA'
+      - .
+  - name: gcr.io/cloud-builders/docker
     id: Push Linear Regression Image
-    args: ['push', 'gcr.io/mlops-476802/linear_regression:$SHORT_SHA']
-
-  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - 'gcr.io/mlops-476802/linear_regression:$SHORT_SHA'
+  - name: gcr.io/cloud-builders/docker
     id: Push Data Cronjob Image
-    args: ['push', 'gcr.io/mlops-476802/ml-cronjob:$SHORT_SHA']
-
-  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - 'gcr.io/mlops-476802/ml-cronjob:$SHORT_SHA'
+  - name: gcr.io/cloud-builders/docker
     id: Push MLflow Image
-    args: ['push', 'gcr.io/mlops-476802/mlflow-server:$SHORT_SHA']
-
-
-
-    ########################################################################################################################
-
-
-  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - push
+      - 'gcr.io/mlops-476802/mlflow-server:$SHORT_SHA'
+  - name: gcr.io/cloud-builders/kubectl
     id: Apply ConfigMap
-    args: ['apply', '-f', 'k8s/confmap_1.yaml']
     env:
-      - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
-
-  - name: 'gcr.io/cloud-builders/kubectl'
+      - CLOUDSDK_COMPUTE_ZONE=$_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+    args:
+      - apply
+      - '-f'
+      - k8s/confmap_1.yaml
+  - name: gcr.io/cloud-builders/kubectl
     id: Apply ServiceAccount
-    args: ['apply', '-f', 'k8s/serviceaccount.yaml']
     env:
-      - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
-
-  - name: 'gcr.io/cloud-builders/gcloud'
+      - CLOUDSDK_COMPUTE_ZONE=$_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+    args:
+      - apply
+      - '-f'
+      - k8s/serviceaccount.yaml
+  - name: gcr.io/cloud-builders/gcloud
     id: Apply CronJob
-    entrypoint: 'bash'
+    entrypoint: bash
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=$_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
     args:
       - '-c'
-      - |
+      - >
         apt-get update && apt-get install -y gettext-base
-        export SHORT_SHA="$SHORT_SHA"
-        export CRON_SCHEDULE="0 */3 * * *"
-        echo "Using SHORT_SHA: $SHORT_SHA"
-        # ✅ Replace ONLY ${SHORT_SHA}, ignore other symbols like *
-        envsubst '${SHORT_SHA},${CRON_SCHEDULE}' < k8s/cronjob.yaml | kubectl apply -f -
-    env:  
-      - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
-  - name: 'gcr.io/cloud-builders/kubectl'
+        export SHORT_SHA="$SHORT_SHA"
+
+        export CRON_SCHEDULE="0 */3 * * *"
+
+        echo "Using SHORT_SHA: $SHORT_SHA"
+
+        # ✅ Replace ONLY ${SHORT_SHA}, ignore other symbols like *
+
+        envsubst '${SHORT_SHA},${CRON_SCHEDULE}' < k8s/cronjob.yaml | kubectl
+        apply -f -
+  - name: gcr.io/cloud-builders/kubectl
     id: Delete previous Linear Regression Job
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=$_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
     args:
-      - 'delete'
-      - 'job'
-      - 'linear-regression'
+      - delete
+      - job
+      - linear-regression
       - '--namespace=ml'
       - '--ignore-not-found=true'
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
-
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: gcr.io/cloud-builders/gcloud
     id: Apply Linear Regression Deployment
-    entrypoint: 'bash'
+    entrypoint: bash
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=$_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
     args:
       - '-c'
       - |
         apt-get update && apt-get install -y gettext-base
         export SHORT_SHA=$SHORT_SHA
         envsubst < k8s/linear_regression.yaml | kubectl apply -f -
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
-
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: gcr.io/cloud-builders/gcloud
     id: Apply MLflow Deployment
-    entrypoint: 'bash'
+    entrypoint: bash
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=$_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
     args:
       - '-c'
       - |
         apt-get update && apt-get install -y gettext-base
         export SHORT_SHA=$SHORT_SHA
         envsubst < k8s/mlflow.yaml | kubectl apply -f -
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
-
-
-  - name: 'gcr.io/cloud-builders/kubectl'
+  - name: gcr.io/cloud-builders/kubectl
     id: Apply mlflow-ingress
-    args: ['apply', '-f', 'k8s/mlflow-ingress.yaml']
     env:
-      - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
-
-
-  # # -------------------------------------------------------------
-  # # 4️⃣ (Optional) Verify all resources
-  # # -------------------------------------------------------------
-  # - name: 'gcr.io/cloud-builders/kubectl'
-  #   id: Verify Deployments
-  #   args:
-  #     - 'get'
-  #     - 'pods'
-  #     - '--namespace=ml'
-  #   env:
-  #     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
-  #     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
-
-
-# -------------------------------------------------------------
-# 🧩 Substitutions
-# -------------------------------------------------------------
-substitutions:
-  _REGION: us-central1-a            # change if needed
-  _CLUSTER: mlops-cluster      # your GKE cluster name
-
-# -------------------------------------------------------------
-# 💾 Images (for tracking build outputs)
-# -------------------------------------------------------------
+      - CLOUDSDK_COMPUTE_ZONE=$_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+    args:
+      - apply
+      - '-f'
+      - k8s/mlflow-ingress.yaml
 images:
   - 'gcr.io/mlops-476802/linear_regression:$SHORT_SHA'
   - 'gcr.io/mlops-476802/ml-cronjob:$SHORT_SHA'
   - 'gcr.io/mlops-476802/mlflow-server:$SHORT_SHA'
-
 options:
- logging: CLOUD_LOGGING_ONLY
+  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _REGION: us-central1-a
+  _CLUSTER: mlops-cluster
