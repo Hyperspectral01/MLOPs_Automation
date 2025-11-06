@@ -7,7 +7,7 @@ metadata:
     app: ml-cronjob
 spec:
   # Run every 3 hours
-  schedule: "0 */3 * * *"
+  schedule: '0 */3 * * *'
   concurrencyPolicy: Forbid          # Avoid overlapping runs
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 2
@@ -23,7 +23,7 @@ spec:
           
           containers:
             - name: ml-cronjob
-              image: gcr.io/mlops-476802/ml-cronjob:$$SHORT_SHA
+              image: "gcr.io/mlops-476802/ml-cronjob:${SHORT_SHA}"
               imagePullPolicy: Always
               # Environment variables
               env:
