@@ -85,9 +85,10 @@ steps:
       echo "Using SHORT_SHA: $SHORT_SHA"
       # ✅ Replace ONLY ${SHORT_SHA}, ignore other symbols like *
       envsubst '${SHORT_SHA}' < k8s/cronjob.yaml | kubectl apply -f -
-  env:
+  env:  
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+    - 'SHORT_SHA=$SHORT_SHA' # <-- ✅ ADD THIS LINE
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Delete prvious Linear Regression Job
