@@ -7,7 +7,7 @@ metadata:
     app: ml-cronjob
 spec:
   # Run every 3 hours
-  schedule: "0 */3 * * *"
+  schedule: "${CRON_SCHEDULE}"
   concurrencyPolicy: Forbid          # Avoid overlapping runs
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 2
