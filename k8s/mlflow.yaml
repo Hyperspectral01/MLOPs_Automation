@@ -44,6 +44,8 @@ spec:
               value: "production"
             - name: GUNICORN_CMD_ARGS
               value: "--timeout 120 --workers 2 --forwarded-allow-ips='*'"
+            - name: MLFLOW_SERVER_ALLOWED_HOSTS
+              value: "*"
           resources:
             requests:
               memory: "128Mi"
