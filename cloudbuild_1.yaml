@@ -77,7 +77,7 @@ steps:
         apt-get update && apt-get install -y gettext-base
 
         export SHORT_SHA="$SHORT_SHA"
-        export CRON_SCHEDULE="$_CRON_SCHEDULE"
+        export CRON_SCHEDULE="0 */3 * * *"
 
         echo "Using SHORT_SHA: $SHORT_SHA"
         echo "Using CRON_SCHEDULE: $CRON_SCHEDULE"
@@ -142,4 +142,4 @@ options:
 substitutions:
   _REGION: us-central1-a
   _CLUSTER: mlops-cluster
-  _CRON_SCHEDULE: "\"0 */3 * * *\""
+  _CRON_SCHEDULE: CRON_0_EVERY_3H
