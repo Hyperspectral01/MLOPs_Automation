@@ -77,8 +77,8 @@ steps:
         apt-get update && apt-get install -y gettext-base
         echo $SHORT_SHA
         export SHORT_SHA=$SHORT_SHA
-        sed 's|${SHORT_SHA}|'"$SHORT_SHA"'|g' k8s/cronjob.yaml
-        sed 's|${SHORT_SHA}|'"$SHORT_SHA"'|g' k8s/cronjob.yaml | kubectl apply -f -
+        sed "s|__THIS__IS__MY__VARIABLE__|$SHORT_SHA|g" k8s/cronjob.yaml
+        sed "s|__THIS__IS__MY__VARIABLE__|$SHORT_SHA|g" k8s/cronjob.yaml | kubectl apply -f -
 
 
 
