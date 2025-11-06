@@ -66,7 +66,7 @@ steps:
 
 #################################################################################
   - name: gcr.io/cloud-builders/gcloud
-    id: Apply CronJob
+    id: Apply CRONJOB Deployment
     entrypoint: bash
     env:
       - CLOUDSDK_COMPUTE_ZONE=$_REGION
@@ -74,17 +74,9 @@ steps:
     args:
       - '-c'
       - |
-        apt-get update && apt-get install -y gettext-base coreutils
-
-        export SHORT_SHA="$SHORT_SHA"
-        export CRON_SCHEDULE=$(echo "$_CRON_SCHEDULE_B64" | base64 --decode)
-
-        echo "Decoded CRON_SCHEDULE: $CRON_SCHEDULE"
-
-        sed -e "s|\$${SHORT_SHA}|$SHORT_SHA|g" \
-            -e "s|\$${CRON_SCHEDULE}|$CRON_SCHEDULE|g" \
-            k8s/cronjob.yaml | kubectl apply -f -
-
+        apt-get update && apt-get install -y gettext-base
+        export SHORT_SHA=$SHORT_SHA
+        envsubst < k8s/cronjob.yaml | kubectl apply -f -
 
 
 ##############################################################################
@@ -142,4 +134,3 @@ options:
 substitutions:
   _REGION: us-central1-a
   _CLUSTER: mlops-cluster
-  _CRON_SCHEDULE_B64: "MCAqLzMgKiAqICo="
