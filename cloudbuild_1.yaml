@@ -74,17 +74,17 @@ steps:
     args:
       - '-c'
       - |
-        apt-get update && apt-get install -y gettext-base
+        apt-get update && apt-get install -y gettext-base coreutils
 
         export SHORT_SHA="$SHORT_SHA"
-        export CRON_SCHEDULE="0 */3 * * *"
+        export CRON_SCHEDULE=$(echo "$_CRON_SCHEDULE_B64" | base64 --decode)
 
-        echo "Using SHORT_SHA: $SHORT_SHA"
-        echo "Using CRON_SCHEDULE: $CRON_SCHEDULE"
+        echo "Decoded CRON_SCHEDULE: $CRON_SCHEDULE"
 
         sed -e "s|\$${SHORT_SHA}|$SHORT_SHA|g" \
             -e "s|\$${CRON_SCHEDULE}|$CRON_SCHEDULE|g" \
             k8s/cronjob.yaml | kubectl apply -f -
+
 
 
 ##############################################################################
@@ -142,4 +142,4 @@ options:
 substitutions:
   _REGION: us-central1-a
   _CLUSTER: mlops-cluster
-  _CRON_SCHEDULE: CRON_0_EVERY_3H
+  _CRON_SCHEDULE_B64: "MCAqLzMgKiAqICo="
