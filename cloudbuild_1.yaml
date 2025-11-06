@@ -71,15 +71,13 @@ steps:
     env:
       - CLOUDSDK_COMPUTE_ZONE=$_REGION
       - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
-      - SHORT_SHA=$SHORT_SHA  # <-- Manually re-inject the variable
     args:
       - '-c'
       - |
         apt-get update && apt-get install -y gettext-base
-        export SHORT_SHA=$SHORT_SHA
         echo $SHORT_SHA
-        envsubst '${SHORT_SHA}'< k8s/cronjob.yaml
-        envsubst '${SHORT_SHA}'< k8s/cronjob.yaml | kubectl apply -f -
+        SHORT_SHA="${SHORT_SHA}" envsubst '${SHORT_SHA}' < k8s/cronjob.yaml
+        SHORT_SHA="${SHORT_SHA}" envsubst '${SHORT_SHA}' < k8s/cronjob.yaml | kubectl apply -f -
 
 
 ##############################################################################
