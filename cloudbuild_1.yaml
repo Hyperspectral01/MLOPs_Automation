@@ -69,6 +69,7 @@ steps:
     env:
       - CLOUDSDK_COMPUTE_ZONE=$_REGION
       - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+      - CRON_SCHEDULE=0 */3 * * *
     args:
       - '-c'
       - >
@@ -76,13 +77,13 @@ steps:
 
         export SHORT_SHA="$SHORT_SHA"
 
-        export CRON_SCHEDULE="0 */3 * * *"
-
         echo "Using SHORT_SHA: $SHORT_SHA"
 
-        # ✅ Replace ONLY ${SHORT_SHA}, ignore other symbols like *
+        echo "Using CRON_SCHEDULE: $CRON_SCHEDULE"
 
-        envsubst '${SHORT_SHA},${CRON_SCHEDULE}' < k8s/cronjob.yaml | kubectl
+        # ✅ Replace ONLY ${SHORT_SHA} and ${CRON_SCHEDULE}, ignore other symbols like *
+
+        envsubst '${SHORT_SHA} ${CRON_SCHEDULE}' < k8s/cronjob.yaml | kubectl
         apply -f -
   - name: gcr.io/cloud-builders/kubectl
     id: Delete previous Linear Regression Job
