@@ -65,6 +65,8 @@ steps:
       - k8s/serviceaccount.yaml
 
 #################################################################################
+
+# sed command wins but with the other variable name
   - name: gcr.io/cloud-builders/gcloud
     id: Apply CRONJOB Deployment
     entrypoint: bash
