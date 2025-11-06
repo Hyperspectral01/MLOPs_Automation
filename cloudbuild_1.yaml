@@ -76,8 +76,9 @@ steps:
       - |
         apt-get update && apt-get install -y gettext-base
         echo $SHORT_SHA
-        SHORT_SHA="${SHORT_SHA}" envsubst '${SHORT_SHA}' < k8s/cronjob.yaml
-        SHORT_SHA="${SHORT_SHA}" envsubst '${SHORT_SHA}' < k8s/cronjob.yaml | kubectl apply -f -
+        export SHORT_SHA=$SHORT_SHA
+        envsubst '\${SHORT_SHA}' < k8s/cronjob.yaml
+        envsubst '\${SHORT_SHA}' < k8s/cronjob.yaml | kubectl apply -f -
 
 
 ##############################################################################
