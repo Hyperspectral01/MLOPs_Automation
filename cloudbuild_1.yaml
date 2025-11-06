@@ -142,4 +142,4 @@ options:
 substitutions:
   _REGION: us-central1-a
   _CLUSTER: mlops-cluster
-  _CRON_SCHEDULE: "0 */3 * * *"
+  _CRON_SCHEDULE: "\"0 */3 * * *\""
