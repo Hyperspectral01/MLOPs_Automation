@@ -71,6 +71,7 @@ steps:
     env:
       - CLOUDSDK_COMPUTE_ZONE=$_REGION
       - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+      - SHORT_SHA=$SHORT_SHA  # <-- Manually re-inject the variable
     args:
       - '-c'
       - |
