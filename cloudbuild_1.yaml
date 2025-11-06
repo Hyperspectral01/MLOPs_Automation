@@ -71,20 +71,20 @@ steps:
     env:
       - CLOUDSDK_COMPUTE_ZONE=$_REGION
       - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
-      - CRON_SCHEDULE=0 */3 * * *
     args:
       - '-c'
       - |
         apt-get update && apt-get install -y gettext-base
         
         export SHORT_SHA="$SHORT_SHA"
+        export CRON_SCHEDULE='0 */3 * * *'
         
         echo "Using SHORT_SHA: $SHORT_SHA"
         echo "Using CRON_SCHEDULE: $CRON_SCHEDULE"
         
         # Replace variables in the YAML
-        sed -e "s|\${SHORT_SHA}|$SHORT_SHA|g" \
-            -e "s|\${CRON_SCHEDULE}|$CRON_SCHEDULE|g" \
+        sed -e "s|\$${SHORT_SHA}|$SHORT_SHA|g" \
+            -e "s|\$${CRON_SCHEDULE}|$CRON_SCHEDULE|g" \
             k8s/cronjob.yaml | kubectl apply -f -
 
 
