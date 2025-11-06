@@ -63,6 +63,8 @@ steps:
       - apply
       - '-f'
       - k8s/serviceaccount.yaml
+
+#################################################################################
   - name: gcr.io/cloud-builders/gcloud
     id: Apply CronJob
     entrypoint: bash
@@ -84,6 +86,10 @@ steps:
         sed -e "s|\${SHORT_SHA}|$SHORT_SHA|g" \
             -e "s|\${CRON_SCHEDULE}|$CRON_SCHEDULE|g" \
             k8s/cronjob.yaml | kubectl apply -f -
+
+
+##############################################################################
+    
   - name: gcr.io/cloud-builders/kubectl
     id: Delete previous Linear Regression Job
     env:
