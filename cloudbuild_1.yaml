@@ -71,13 +71,13 @@ steps:
     env:
       - CLOUDSDK_COMPUTE_ZONE=$_REGION
       - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+      - CRON_SCHEDULE=0 */3 * * *
     args:
       - '-c'
       - |
         apt-get update && apt-get install -y gettext-base
         
         export SHORT_SHA="$SHORT_SHA"
-        export CRON_SCHEDULE='0 */3 * * *'
         
         echo "Using SHORT_SHA: $SHORT_SHA"
         echo "Using CRON_SCHEDULE: $CRON_SCHEDULE"
