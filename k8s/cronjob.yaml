@@ -23,7 +23,7 @@ spec:
           
           containers:
             - name: ml-cronjob
-              image: "gcr.io/mlops-476802/ml-cronjob:__THIS__IS__MY__VARIABLE__"
+              image: gcr.io/mlops-476802/ml-cronjob:__THIS__IS__MY__VARIABLE__
               imagePullPolicy: Always
               # Environment variables
               env:
