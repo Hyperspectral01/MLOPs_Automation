@@ -64,7 +64,7 @@ steps:
       - '-f'
       - k8s/serviceaccount.yaml
 
-#################################################################################
+################################################################################
 
 
 
@@ -81,7 +81,7 @@ steps:
         kubectl delete cronjob ml-cronjob -n ml --ignore-not-found=true
         echo "Old CronJob deleted (if it existed)"
 
-        
+
 
 # sed command wins but with the other variable name -- hehe this works now :)
   - name: gcr.io/cloud-builders/gcloud
