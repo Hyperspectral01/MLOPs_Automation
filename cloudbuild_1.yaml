@@ -66,6 +66,23 @@ steps:
 
 #################################################################################
 
+
+
+# Delete existing CronJob to ensure clean deployment
+  - name: gcr.io/cloud-builders/gcloud
+    id: Delete Old CRONJOB
+    entrypoint: bash
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=$_REGION
+      - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+    args:
+      - '-c'
+      - |
+        kubectl delete cronjob ml-cronjob -n ml --ignore-not-found=true
+        echo "Old CronJob deleted (if it existed)"
+
+        
+
 # sed command wins but with the other variable name -- hehe this works now :)
   - name: gcr.io/cloud-builders/gcloud
     id: Apply CRONJOB Deployment
