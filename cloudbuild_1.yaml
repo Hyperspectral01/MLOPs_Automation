@@ -66,7 +66,7 @@ steps:
 
 #################################################################################
 
-# sed command wins but with the other variable name
+# sed command wins but with the other variable name -- hehe this works now :)
   - name: gcr.io/cloud-builders/gcloud
     id: Apply CRONJOB Deployment
     entrypoint: bash
