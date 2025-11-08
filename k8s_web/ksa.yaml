@@ -4,6 +4,8 @@ kind: ServiceAccount
 metadata:
   name: web-service-account
   namespace: web
+  annotations:
+    iam.gke.io/gcp-service-account: ml-serviceaccount@mlops-476802.iam.gserviceaccount.com
 ---
 # 2️⃣ Give it RBAC rights
 apiVersion: rbac.authorization.k8s.io/v1

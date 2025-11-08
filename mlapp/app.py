@@ -125,10 +125,85 @@ def preprocess_data_for_prediction(data: dict) -> np.ndarray:
     return np.array(all_features).reshape(1, -1)
 
 
+# def load_best_model_from_mlflow():
+#     """
+#     Load the best model from MLflow tracking server.
+#     Searches for the best run based on metrics and loads the model.
+#     """
+#     global loaded_model, experiment_name, model_version, model_run_id
+    
+#     start_time = time.time()
+    
+#     try:
+#         # Set MLflow tracking URI to Kubernetes service
+#         mlflow.set_tracking_uri("http://136.114.243.44/")
+#         client = MlflowClient()
+        
+#         # Get all experiments (you can filter by specific experiment name if needed)
+#         experiments = client.search_experiments()
+        
+#         best_run = None
+#         best_metric = float('-inf')  # Assuming we're maximising (e.g., Accuracy)
+#         best_experiment = None
+        
+#         # Search through all experiments and runs
+#         for experiment in experiments:
+#             if experiment.lifecycle_stage == "deleted":
+#                 continue
+            
+#             # Search runs in this experiment, ordered by metrics
+#             runs = mlflow.search_runs(
+#                 experiment_ids=[experiment.experiment_id],
+#                 order_by=["metrics.accuracy DESC"],  # Adjust metric name as needed
+#                 max_results=1
+#             )
+            
+#             if not runs.empty:
+#                 run = runs.iloc[0]
+#                 metric_value = run.get('metrics.accuracy')
+#                 if pd.isna(metric_value):
+#                     continue
+#                 if metric_value > best_metric:
+#                     best_metric = metric_value
+#                     best_run = run
+#                     best_experiment = experiment
+        
+#         if best_run is None:
+#             print("WARNING: No runs found in MLflow. Using dummy model.")
+#             loaded_model = None
+#             experiment_name = "dummy"
+#             return
+        
+#         # Extract information about the best run
+#         experiment_name = best_experiment.name
+#         model_run_id = best_run['run_id']
+        
+#         print(f"Loading best model from experiment: {experiment_name}")
+#         print(f"Run ID: {model_run_id}")
+#         print(f"Best metric (Accuracy): {best_metric}")
+        
+#         # # Load the model from the best run
+#         model_uri = f"runs:/{model_run_id}/model"
+#         loaded_model = mlflow.sklearn.load_model(model_uri)
+                
+#         load_time = time.time() - start_time
+#         model_load_time.set(load_time)
+        
+#         print(f"Model loaded successfully in {load_time:.2f} seconds")
+#         print(f"Experiment type: {experiment_name}")
+        
+#     except Exception as e:
+#         print(f"Error loading model from MLflow: {e}")
+#         print("Falling back to dummy model")
+#         loaded_model = None
+#         experiment_name = "dummy"
+#         model_load_time.set(time.time() - start_time)
+
+
 def load_best_model_from_mlflow():
     """
-    Load the best model from MLflow tracking server.
-    Searches for the best run based on metrics and loads the model.
+    Load the best model from MLflow Model Registry.
+    Searches for the best registered model version based on metrics and loads the model.
     """
     global loaded_model, experiment_name, model_version, model_run_id
     
@@ -136,65 +211,180 @@ def load_best_model_from_mlflow():
     
     try:
         # Set MLflow tracking URI to Kubernetes service
-        mlflow.set_tracking_uri("http://136.114.243.44/")
+        mlflow.set_tracking_uri("http://mlflow.ml.svc.cluster.local")
         client = MlflowClient()
         
-        # Get all experiments (you can filter by specific experiment name if needed)
-        experiments = client.search_experiments()
+        # Get all registered models
+        registered_models = client.search_registered_models()
         
-        best_run = None
-        best_metric = float('-inf')  # Assuming we're maximising (e.g., Accuracy)
-        best_experiment = None
-        
-        # Search through all experiments and runs
-        for experiment in experiments:
-            if experiment.lifecycle_stage == "deleted":
-                continue
+        if not registered_models:
+            print("WARNING: No registered models found in MLflow.")
+            # Fallback: search experiments for runs
+            experiments = client.search_experiments()
+            best_run = None
+            best_metric = float('-inf')
+            best_experiment = None
             
-            # Search runs in this experiment, ordered by metrics
-            runs = mlflow.search_runs(
-                experiment_ids=[experiment.experiment_id],
-                order_by=["metrics.accuracy DESC"],  # Adjust metric name as needed
-                max_results=1
-            )
-            
-            if not runs.empty:
-                run = runs.iloc[0]
-                metric_value = run.get('metrics.accuracy')
-                if pd.isna(metric_value):
+            for experiment in experiments:
+                if experiment.lifecycle_stage == "deleted":
                     continue
-                if metric_value > best_metric:
-                    best_metric = metric_value
-                    best_run = run
-                    best_experiment = experiment
+                
+                runs = mlflow.search_runs(
+                    experiment_ids=[experiment.experiment_id],
+                    order_by=["metrics.accuracy DESC"],
+                    max_results=1
+                )
+                
+                if not runs.empty:
+                    run = runs.iloc[0]
+                    metric_value = run.get('metrics.accuracy')
+                    if pd.isna(metric_value):
+                        continue
+                    if metric_value > best_metric:
+                        best_metric = metric_value
+                        best_run = run
+                        best_experiment = experiment
+            
+            if best_run is None:
+                print("WARNING: No runs found in MLflow. Using dummy model.")
+                loaded_model = None
+                experiment_name = "dummy"
+                return
+            
+            experiment_name = best_experiment.name
+            model_run_id = best_run['run_id']
+            print(f"Loading model from experiment: {experiment_name}")
+            print(f"Run ID: {model_run_id}")
+            print(f"Best metric (Accuracy): {best_metric}")
+            
+            # Try to construct GCS path from run info
+            try:
+                run_info = client.get_run(model_run_id)
+                artifact_uri = run_info.info.artifact_uri
+                print(f"Artifact URI: {artifact_uri}")
+                
+                # Construct model path
+                model_uri = f"{artifact_uri}/model"
+                print(f"Attempting to load from: {model_uri}")
+                loaded_model = mlflow.sklearn.load_model(model_uri)
+            except Exception as e:
+                print(f"Failed to load from artifact URI: {e}")
+                # Fallback to runs:/ format
+                model_uri = f"runs:/{model_run_id}/model"
+                print(f"Attempting to load from: {model_uri}")
+                loaded_model = mlflow.sklearn.load_model(model_uri)
         
-        if best_run is None:
-            print("WARNING: No runs found in MLflow. Using dummy model.")
-            loaded_model = None
-            experiment_name = "dummy"
-            return
-        
-        # Extract information about the best run
-        experiment_name = best_experiment.name
-        model_run_id = best_run['run_id']
-        
-        print(f"Loading best model from experiment: {experiment_name}")
-        print(f"Run ID: {model_run_id}")
-        print(f"Best metric (Accuracy): {best_metric}")
-        
-        # Load the model from the best run
-        model_uri = f"runs:/{model_run_id}/model"
-        loaded_model = mlflow.sklearn.load_model(model_uri)
+        else:
+            # Search through registered models
+            best_model_name = None
+            best_model_version = None
+            best_metric = float('-inf')
+            best_run_id = None
+            best_source = None
+            
+            print(f"Found {len(registered_models)} registered models")
+            
+            for model in registered_models:
+                model_name = model.name
+                print(f"Checking model: {model_name}")
+                
+                # Get all versions of this model
+                versions = client.search_model_versions(f"name='{model_name}'")
+                
+                for version in versions:
+                    run_id = version.run_id
+                    source = version.source
+                    
+                    try:
+                        run = client.get_run(run_id)
+                        metric_value = run.data.metrics.get('accuracy')
+                        
+                        if metric_value is not None and metric_value > best_metric:
+                            best_metric = metric_value
+                            best_model_name = model_name
+                            best_model_version = version.version
+                            best_run_id = run_id
+                            best_source = source
+                            print(f"  Version {version.version}: accuracy={metric_value:.4f} ✓ (best so far)")
+                        else:
+                            print(f"  Version {version.version}: accuracy={metric_value}")
+                            
+                    except Exception as e:
+                        print(f"  Could not get metrics for version {version.version}: {e}")
+                        continue
+            
+            if best_model_name is None:
+                print("WARNING: No model versions with metrics found. Using dummy model.")
+                loaded_model = None
+                experiment_name = "dummy"
+                return
+            
+            experiment_name = best_model_name
+            model_version = best_model_version
+            model_run_id = best_run_id
+            
+            print(f"\nBest model selected:")
+            print(f"  Name: {best_model_name}")
+            print(f"  Version: {best_model_version}")
+            print(f"  Run ID: {best_run_id}")
+            print(f"  Accuracy: {best_metric:.4f}")
+            print(f"  Source: {best_source}")
+            
+            # Try multiple loading strategies
+            load_success = False
+            
+            # Strategy 1: Load from source path directly
+            if best_source:
+                try:
+                    print(f"\n[Strategy 1] Loading from source path...")
+                    loaded_model = mlflow.sklearn.load_model(best_source)
+                    load_success = True
+                    print(f"✓ Successfully loaded from source path")
+                except Exception as e:
+                    print(f"✗ Failed to load from source: {e}")
+            
+            # Strategy 2: Load from models:/ registry format
+            if not load_success:
+                try:
+                    print(f"\n[Strategy 2] Loading from model registry...")
+                    model_uri = f"models:/{best_model_name}/{best_model_version}"
+                    loaded_model = mlflow.sklearn.load_model(model_uri)
+                    load_success = True
+                    print(f"✓ Successfully loaded from registry: {model_uri}")
+                except Exception as e:
+                    print(f"✗ Failed to load from registry: {e}")
+            
+            # Strategy 3: Load from runs:/ format
+            if not load_success:
+                try:
+                    print(f"\n[Strategy 3] Loading from run ID...")
+                    model_uri = f"runs:/{best_run_id}/model"
+                    loaded_model = mlflow.sklearn.load_model(model_uri)
+                    load_success = True
+                    print(f"✓ Successfully loaded from run: {model_uri}")
+                except Exception as e:
+                    print(f"✗ Failed to load from run: {e}")
+            
+            if not load_success:
+                print("\n✗ All loading strategies failed. Using dummy model.")
+                loaded_model = None
+                experiment_name = "dummy"
+                return
         
         load_time = time.time() - start_time
         model_load_time.set(load_time)
         
+        print(f"\n{'='*80}")
         print(f"Model loaded successfully in {load_time:.2f} seconds")
-        print(f"Experiment type: {experiment_name}")
+        print(f"Experiment: {experiment_name}")
+        print(f"{'='*80}\n")
         
     except Exception as e:
         print(f"Error loading model from MLflow: {e}")
-        print("Falling back to dummy model")
+        import traceback
+        print(f"Full traceback:")
+        traceback.print_exc()
+        print("\nFalling back to dummy model")
         loaded_model = None
         experiment_name = "dummy"
         model_load_time.set(time.time() - start_time)

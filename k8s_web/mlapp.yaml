@@ -15,6 +15,7 @@ spec:
       labels:
         app: mlapp
     spec:
+      serviceAccountName: web-service-account
       containers:
         - name: mlapp
           image: gcr.io/mlops-476802/mlapp:$SHORT_SHA
