@@ -136,7 +136,7 @@ def load_best_model_from_mlflow():
     
     try:
         # Set MLflow tracking URI to Kubernetes service
-        mlflow.set_tracking_uri("http://mlflow.ml.svc.cluster.local")
+        mlflow.set_tracking_uri("http://136.114.243.44/")
         client = MlflowClient()
         
         # Get all experiments (you can filter by specific experiment name if needed)
@@ -184,7 +184,7 @@ def load_best_model_from_mlflow():
         
         # Load the model from the best run
         model_uri = f"runs:/{model_run_id}/model"
-        loaded_model = mlflow.pyfunc.load_model(model_uri)
+        loaded_model = mlflow.sklearn.load_model(model_uri)
         
         load_time = time.time() - start_time
         model_load_time.set(load_time)
@@ -198,7 +198,6 @@ def load_best_model_from_mlflow():
         loaded_model = None
         experiment_name = "dummy"
         model_load_time.set(time.time() - start_time)
-
 
 @app.route('/predict', methods=['POST'])
 def predict():
