@@ -440,7 +440,7 @@ def main():
         mlflow.set_tag("trained_till_version", trained_till_version_tag)
         print(f"\nSet tag: trained_till_version = {trained_till_version_tag}")
         
-        # Log the model
+        # Log themodel
         print(f"\n[Step 10] Logging model to MLflow...")
         mlflow.sklearn.log_model(
             trained_model,
