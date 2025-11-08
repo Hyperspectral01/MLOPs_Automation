@@ -176,7 +176,7 @@ def get_or_create_experiment(client: MlflowClient, experiment_name: str) -> str:
 
 def get_best_model_and_version(client: MlflowClient, experiment_name: str):
     """
-    Get the best model from existing runs and the trained_till_version.
+    Get the best model from existing runs and the trained_till_version and the best run_id
     
     Args:
         client: MLflow client
@@ -187,7 +187,68 @@ def get_best_model_and_version(client: MlflowClient, experiment_name: str):
         Returns (None, 0, None) if no runs exist
     """
     try:
-        # Search for runs with best accuracy
+        # First, try to get from registered models (Strategy 1)
+        try:
+            # Search for registered model with this experiment name
+            versions = client.search_model_versions(f"name='{experiment_name}'")
+            
+            if versions:
+                print(f"Found {len(versions)} registered model versions for '{experiment_name}'")
+                
+                best_model_version = None
+                best_metric = float('-inf')
+                best_run_id = None
+                best_source = None
+                
+                # Find version with best accuracy
+                for version in versions:
+                    run_id = version.run_id
+                    source = version.source
+                    
+                    try:
+                        run = client.get_run(run_id)
+                        metric_value = run.data.metrics.get('accuracy')
+                        
+                        if metric_value is not None and metric_value > best_metric:
+                            best_metric = metric_value
+                            best_model_version = version.version
+                            best_run_id = run_id
+                            best_source = source
+                            print(f"  Version {version.version}: accuracy={metric_value:.4f} ✓")
+                        else:
+                            print(f"  Version {version.version}: accuracy={metric_value}")
+                    except Exception as e:
+                        print(f"  Could not get metrics for version {version.version}: {e}")
+                        continue
+                
+                if best_run_id:
+                    print(f"\nBest registered model version:")
+                    print(f"  Run ID: {best_run_id}")
+                    print(f"  Accuracy: {best_metric:.4f}")
+                    print(f"  Source: {best_source}")
+                    
+                    # Get the trained_till_version tag
+                    run_data = client.get_run(best_run_id)
+                    trained_till_version_tag = run_data.data.tags.get('trained_till_version', 'v0')
+                    
+                    # Extract numeric version (e.g., "v3" -> 3)
+                    version_match = re.search(r'v(\d+)', trained_till_version_tag)
+                    trained_till_version = int(version_match.group(1)) if version_match else 0
+                    
+                    print(f"  Trained till version: v{trained_till_version}")
+                    
+                    # Load the model from source path (Strategy 1)
+                    print(f"  Loading from source path...")
+                    loaded_model = mlflow.sklearn.load_model(best_source)
+                    print(f"  ✓ Model loaded successfully from registry")
+                    
+                    return loaded_model, trained_till_version, best_run_id
+        
+        except Exception as e:
+            print(f"Could not load from registry: {e}")
+            print("Falling back to search_runs approach...")
+        
+        # Fallback: Search for runs directly (original approach)
         runs = mlflow.search_runs(
             experiment_names=[experiment_name],
             order_by=["metrics.accuracy DESC"],
@@ -216,18 +277,58 @@ def get_best_model_and_version(client: MlflowClient, experiment_name: str):
         
         print(f"  Trained till version: v{trained_till_version}")
         
-        # Load the model
-        model_uri = f"runs:/{best_run_id}/model"
-        loaded_model = mlflow.sklearn.load_model(model_uri)
-        print(f"  Model loaded successfully")
+        # Try multiple loading strategies
+        load_success = False
+        loaded_model = None
+        
+        # Strategy 1: Try to get source from registered model
+        try:
+            versions = client.search_model_versions(f"run_id='{best_run_id}'")
+            if versions:
+                best_source = versions[0].source
+                print(f"  Found source path: {best_source}")
+                loaded_model = mlflow.sklearn.load_model(best_source)
+                load_success = True
+                print(f"  ✓ Model loaded from source path")
+        except Exception as e:
+            print(f"  Could not load from source: {e}")
+        
+        # Strategy 2: Load from runs:/ format
+        if not load_success:
+            try:
+                model_uri = f"runs:/{best_run_id}/model"
+                print(f"  Attempting to load from: {model_uri}")
+                loaded_model = mlflow.sklearn.load_model(model_uri)
+                load_success = True
+                print(f"  ✓ Model loaded from run URI")
+            except Exception as e:
+                print(f"  Could not load from run URI: {e}")
+        
+        # Strategy 3: Load from artifact URI
+        if not load_success:
+            try:
+                artifact_uri = run_data.info.artifact_uri
+                model_uri = f"{artifact_uri}/model"
+                print(f"  Attempting to load from artifact URI: {model_uri}")
+                loaded_model = mlflow.sklearn.load_model(model_uri)
+                load_success = True
+                print(f"  ✓ Model loaded from artifact URI")
+            except Exception as e:
+                print(f"  Could not load from artifact URI: {e}")
+        
+        if not load_success:
+            print("  ✗ All loading strategies failed")
+            return None, trained_till_version, best_run_id
         
         return loaded_model, trained_till_version, best_run_id
         
     except Exception as e:
         print(f"Error loading best model: {e}")
+        import traceback
+        traceback.print_exc()
         return None, 0, None
 
-
+   
 def train_model(model, X_train, y_train):
     """
     Train or continue training a Linear Regression model.

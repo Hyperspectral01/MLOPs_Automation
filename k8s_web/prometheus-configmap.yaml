@@ -33,21 +33,21 @@ data:
         scrape_interval: 10s
         metrics_path: '/metrics'
         static_configs:
-          - targets: ['webapp.web.svc.cluster.local:80']
+          - targets: ['webapp:80']
             labels:
               service: 'webapp'
               component: 'frontend'
               app: 'webapp'
         
         # Relabel to add instance information
-        relabel_configs:
-          - source_labels: [__address__]
-            target_label: instance
-          - source_labels: [__address__]
-            target_label: __param_target
-          - source_labels: [__param_target]
-            target_label: instance
-          - target_label: __address__
+        # relabel_configs:
+        #   - source_labels: [__address__]
+        #     target_label: instance
+        #   - source_labels: [__address__]
+        #     target_label: __param_target
+        #   - source_labels: [__param_target]
+        #     target_label: instance
+        #   - target_label: __address__
       
       # Database Service Metrics
       # Tracks: Store/retrieve requests, latency, MongoDB health, connections
@@ -55,20 +55,20 @@ data:
         scrape_interval: 10s
         metrics_path: '/metrics'
         static_configs:
-          - targets: ['dbapp.web.svc.cluster.local:80']
+          - targets: ['dbapp:80']
             labels:
               service: 'dbapp'
               component: 'database'
               app: 'dbapp'
         
-        relabel_configs:
-          - source_labels: [__address__]
-            target_label: instance
-          - source_labels: [__address__]
-            target_label: __param_target
-          - source_labels: [__param_target]
-            target_label: instance
-          - target_label: __address__
+        # relabel_configs:
+        #   - source_labels: [__address__]
+        #     target_label: instance
+        #   - source_labels: [__address__]
+        #     target_label: __param_target
+        #   - source_labels: [__param_target]
+        #     target_label: instance
+        #   - target_label: __address__
       
       # ML Service Metrics
       # Tracks: Predictions, model performance, errors, latency
@@ -76,20 +76,20 @@ data:
         scrape_interval: 10s
         metrics_path: '/metrics'
         static_configs:
-          - targets: ['mlapp.web.svc.cluster.local:80']
+          - targets: ['mlapp:80']
             labels:
               service: 'mlapp'
               component: 'ml-inference'
               app: 'mlapp'
         
-        relabel_configs:
-          - source_labels: [__address__]
-            target_label: instance
-          - source_labels: [__address__]
-            target_label: __param_target
-          - source_labels: [__param_target]
-            target_label: instance
-          - target_label: __address__
+        # relabel_configs:
+        #   - source_labels: [__address__]
+        #     target_label: instance
+        #   - source_labels: [__address__]
+        #     target_label: __param_target
+        #   - source_labels: [__param_target]
+        #     target_label: instance
+        #   - target_label: __address__
       
       # Kubernetes API server metrics (optional but useful)
       # - job_name: 'kubernetes-apiservers'
