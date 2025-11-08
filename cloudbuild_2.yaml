@@ -59,7 +59,7 @@ steps:
 # -------------------------------------------------------------
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply ConfigMap 2
-  args: ['apply', '-f', 'k8s/confmap_2.yaml']
+  args: ['apply', '-f', 'k8s_web/confmap_2.yaml']
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
@@ -72,7 +72,7 @@ steps:
     - |
       apt-get update && apt-get install -y gettext-base
       export SHORT_SHA=$SHORT_SHA
-      envsubst < k8s/dbapp.yaml | kubectl apply -f -
+      envsubst < k8s_web/dbapp.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
@@ -85,7 +85,7 @@ steps:
     - |
       apt-get update && apt-get install -y gettext-base
       export SHORT_SHA=$SHORT_SHA
-      envsubst < k8s/mlapp.yaml | kubectl apply -f -
+      envsubst < k8s_web/mlapp.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
@@ -98,31 +98,63 @@ steps:
     - |
       apt-get update && apt-get install -y gettext-base
       export SHORT_SHA=$SHORT_SHA
-      envsubst < k8s/webapp.yaml | kubectl apply -f -
+      envsubst < k8s_web/webapp.yaml | kubectl apply -f -
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
+
+
+
+###############################################################################
+
+# Delete existing CronJob to ensure clean deployment
+- name: gcr.io/cloud-builders/gcloud
+  id: Delete Old CRONJOB for restart-mlapp
+  entrypoint: bash
+  env:
+    - CLOUDSDK_COMPUTE_ZONE=$_REGION
+    - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+  args:
+    - '-c'
+    - |
+      kubectl delete cronjob restart-mlapp -n web --ignore-not-found=true
+      echo "Old CronJob deleted (if it existed)"
+
+
+- name: gcr.io/cloud-builders/gcloud
+  id: Apply CRONJOB Deployment for restart-mlapp
+  entrypoint: bash
+  env:
+    - CLOUDSDK_COMPUTE_ZONE=$_REGION
+    - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+  args:
+    - '-c'
+    - |
+      kubectl apply -f k8s_web/restart-mlapp.yaml
+
+
+###############################################################################
 
 # -------------------------------------------------------------
 # 4️⃣ Prometheus Monitoring Setup
 # -------------------------------------------------------------
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Prometheus ConfigMap
-  args: ['apply', '-f', 'k8s/prometheus-configmap.yaml']
+  args: ['apply', '-f', 'k8s_web/prometheus-configmap.yaml']
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Prometheus Deployment
-  args: ['apply', '-f', 'k8s/prometheus-deployment.yaml']
+  args: ['apply', '-f', 'k8s_web/prometheus-deployment.yaml']
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Prometheus Service
-  args: ['apply', '-f', 'k8s/prometheus-service.yaml']
+  args: ['apply', '-f', 'k8s_web/prometheus-service.yaml']
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
@@ -132,7 +164,7 @@ steps:
 # -------------------------------------------------------------
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Apply Ingress
-  args: ['apply', '-f', 'k8s/ingress.yaml']
+  args: ['apply', '-f', 'k8s_web/ingress.yaml']
   env:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'

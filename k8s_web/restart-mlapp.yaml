@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restart-mlapp
+  namespace: web
+spec:
+  schedule: "0 */7 * * *"   # every 7 hours
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl:latest
+              command:
+                - /bin/sh
+                - -c
+                - kubectl rollout restart deployment mlapp-deployment -n web
+          restartPolicy: OnFailure

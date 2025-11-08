@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: linear-regression
+  namespace: ml
+  labels:
+    app: linear-regression
+spec:
+  schedule: "0 */6 * * *"   # <-- Every 6 hours
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: linear-regression
+        spec:
+          serviceAccountName: ml-service-account
+          containers:
+            - name: linear-regression
+              image: gcr.io/mlops-476802/linear_regression:__THIS__IS__MY__VARIABLE__
+              imagePullPolicy: Always
+              env:
+                - name: BUCKET_2
+                  valueFrom:
+                    configMapKeyRef:
+                      name: confmap-1
+                      key: BUCKET_2
+              resources:
+                requests:
+                  cpu: "250m"
+                  memory: "512Mi"
+                limits:
+                  cpu: "1000m"
+                  memory: "1Gi"
+          restartPolicy: Never

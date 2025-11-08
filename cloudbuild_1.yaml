@@ -53,7 +53,7 @@ steps:
     args:
       - apply
       - '-f'
-      - k8s/confmap_1.yaml
+      - k8s_ml/confmap_1.yaml
   - name: gcr.io/cloud-builders/kubectl
     id: Apply ServiceAccount
     env:
@@ -62,7 +62,7 @@ steps:
     args:
       - apply
       - '-f'
-      - k8s/serviceaccount.yaml
+      - k8s_ml/serviceaccount.yaml
 
 ################################################################################
 
@@ -96,26 +96,32 @@ steps:
         apt-get update && apt-get install -y gettext-base
         echo $SHORT_SHA
         export SHORT_SHA=$SHORT_SHA
-        sed "s|__THIS__IS__MY__VARIABLE__|$SHORT_SHA|g" k8s/cronjob.yaml
-        sed "s|__THIS__IS__MY__VARIABLE__|$SHORT_SHA|g" k8s/cronjob.yaml | kubectl apply -f -
+        sed "s|__THIS__IS__MY__VARIABLE__|$SHORT_SHA|g" k8s_ml/cronjob.yaml
+        sed "s|__THIS__IS__MY__VARIABLE__|$SHORT_SHA|g" k8s_ml/cronjob.yaml | kubectl apply -f -
 
 
 
 ##############################################################################
-    
-  - name: gcr.io/cloud-builders/kubectl
-    id: Delete previous Linear Regression Job
+
+
+# Delete existing CronJob to ensure clean deployment
+  - name: gcr.io/cloud-builders/gcloud
+    id: Delete Old Linear Regression CRONJOB
+    entrypoint: bash
     env:
       - CLOUDSDK_COMPUTE_ZONE=$_REGION
       - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
     args:
-      - delete
-      - job
-      - linear-regression
-      - '--namespace=ml'
-      - '--ignore-not-found=true'
+      - '-c'
+      - |
+        kubectl delete cronjob linear-regression -n ml --ignore-not-found=true
+        echo "Old CronJob deleted (if it existed)"
+
+
+
+# sed command wins but with the other variable name -- hehe this works now :)
   - name: gcr.io/cloud-builders/gcloud
-    id: Apply Linear Regression Deployment
+    id: Apply CRONJOB Deployment for Linear Regression
     entrypoint: bash
     env:
       - CLOUDSDK_COMPUTE_ZONE=$_REGION
@@ -124,8 +130,15 @@ steps:
       - '-c'
       - |
         apt-get update && apt-get install -y gettext-base
+        echo $SHORT_SHA
         export SHORT_SHA=$SHORT_SHA
-        envsubst < k8s/linear_regression.yaml | kubectl apply -f -
+        sed "s|__THIS__IS__MY__VARIABLE__|$SHORT_SHA|g" k8s_ml/linear_regression.yaml
+        sed "s|__THIS__IS__MY__VARIABLE__|$SHORT_SHA|g" k8s_ml/linear_regression.yaml | kubectl apply -f -
+
+
+
+###############################################################################
+
   - name: gcr.io/cloud-builders/gcloud
     id: Apply MLflow Deployment
     entrypoint: bash
@@ -137,7 +150,7 @@ steps:
       - |
         apt-get update && apt-get install -y gettext-base
         export SHORT_SHA=$SHORT_SHA
-        envsubst < k8s/mlflow.yaml | kubectl apply -f -
+        envsubst < k8s_ml/mlflow.yaml | kubectl apply -f -
   - name: gcr.io/cloud-builders/kubectl
     id: Apply mlflow-ingress
     env:
@@ -146,7 +159,7 @@ steps:
     args:
       - apply
       - '-f'
-      - k8s/mlflow-ingress.yaml
+      - k8s_ml/mlflow-ingress.yaml
 images:
   - 'gcr.io/mlops-476802/linear_regression:$SHORT_SHA'
   - 'gcr.io/mlops-476802/ml-cronjob:$SHORT_SHA'

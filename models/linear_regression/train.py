@@ -39,7 +39,8 @@ MLFLOW_TRACKING_URI = "http://mlflow.ml.svc.cluster.local"
 
 # Get parent directory name (experiment name)
 current_file_path = Path(__file__).resolve()
-EXPERIMENT_NAME = current_file_path.parent.name
+# EXPERIMENT_NAME = current_file_path.parent.name
+EXPERIMENT_NAME="linear_regression"
 print(f"Experiment name (from parent directory): {EXPERIMENT_NAME}")
 
 
