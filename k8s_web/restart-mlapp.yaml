@@ -9,6 +9,7 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName: web-service-account
           containers:
             - name: kubectl
               image: bitnami/kubectl:latest

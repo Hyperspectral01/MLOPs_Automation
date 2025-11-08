@@ -64,6 +64,17 @@ steps:
     - 'CLOUDSDK_COMPUTE_ZONE=$_REGION'
     - 'CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER'
 
+
+- name: gcr.io/cloud-builders/kubectl
+  id: Apply ServiceAccount
+  env:
+    - CLOUDSDK_COMPUTE_ZONE=$_REGION
+    - CLOUDSDK_CONTAINER_CLUSTER=$_CLUSTER
+  args:
+    - apply
+    - '-f'
+    - k8s_web/ksa.yaml
+
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Apply DB App Deployment
   entrypoint: 'bash'

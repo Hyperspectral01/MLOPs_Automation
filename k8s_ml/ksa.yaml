@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ml-service-account
+  namespace: ml
+  annotations:
+    iam.gke.io/gcp-service-account: ml-serviceaccount@mlops-476802.iam.gserviceaccount.com
+
+
+
+# Just remember, when it is someone trying to contact the GCP services like buckets or something, it is a 2 step process.
+# 0. You would already have GSA (Google service account) (that is your master card) -> This can be created from GCP UI and various permissions can be provided
+# 1. Create a KSA (thats like your namespace scoped card) and add an annotation (the link/ the wire between the two cards) (can be done as yaml or commands)
+# 2. Authorise workload identity from the GSA side (done using commands)
+
+
+
+# And when it is that you want to manipulate and play around with pods using other pods, then the pods who would be creating or restarting those other pods would require certain permissions. So hehe, basically a 3 step process.
+# 0. Create a KSA (which is your namespace scoped card) (can be done as yaml or commands) [and then optionally an annotation but that is not required]
+# 1. Create a ROLE that gets access to certain actions and resources (can be done as yaml or commands)
+# 2. Create a ROLEBINDING that binds the above created ROLE to the KSA (can be done as yaml or commands)
+
+# But no matter how you create the KSA, and/or the annotations and role bindings, through the yaml or the commands, finally the KSA name should be mentioned in the yaml files of the individual pods.
+    
