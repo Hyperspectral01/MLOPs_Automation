@@ -11,4 +11,3 @@ data:
   BUCKET_3: "gs://mlops-476802-bucket-3" #Since this is getting used in the mlflow server for artifact root
   BATCH_SIZE: "50"
   TRAIN_TEST_SPLIT: "0.7"
-  POSTGRESQL_URI: "postgresql://mlflow_user:mypostgresql@10.72.0.3:5432/mlflowdb"
