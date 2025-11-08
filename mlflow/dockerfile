@@ -4,6 +4,8 @@ WORKDIR /app
 
 RUN pip install --no-cache-dir mlflow psycopg2-binary boto3
 
+ENV PYTHONUNBUFFERED=1
+
 EXPOSE 5000
 
 # Command: start the MLflow tracking server using env vars

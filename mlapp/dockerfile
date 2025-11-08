@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/* \
 # Copy application code
 COPY . .
 
+ENV PYTHONUNBUFFERED=1
+
 # Expose the application port
 EXPOSE 5001
 

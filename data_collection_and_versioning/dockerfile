@@ -14,5 +14,7 @@ RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/* \
 # Copy the rest of your project files
 COPY . .
 
+ENV PYTHONUNBUFFERED=1
+
 # Command to run the daemon
 CMD ["python", "cronjob.py"]
