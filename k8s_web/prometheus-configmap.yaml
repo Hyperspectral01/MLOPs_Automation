@@ -33,7 +33,7 @@ data:
         scrape_interval: 10s
         metrics_path: '/metrics'
         static_configs:
-          - targets: ['webapp:80']
+          - targets: ['webapp.web.svc.cluster.local:80']
             labels:
               service: 'webapp'
               component: 'frontend'
@@ -55,7 +55,7 @@ data:
         scrape_interval: 10s
         metrics_path: '/metrics'
         static_configs:
-          - targets: ['dbapp:80']
+          - targets: ['dbapp.web.svc.cluster.local:80']
             labels:
               service: 'dbapp'
               component: 'database'
@@ -76,7 +76,7 @@ data:
         scrape_interval: 10s
         metrics_path: '/metrics'
         static_configs:
-          - targets: ['mlapp:80']
+          - targets: ['mlapp.web.svc.cluster.local:80']
             labels:
               service: 'mlapp'
               component: 'ml-inference'
