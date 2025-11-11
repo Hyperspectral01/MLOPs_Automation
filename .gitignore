@@ -1,1 +1,6 @@
 dbapp\.env
+dbapp\.venv
+data_collection_and_versioning\.venv
+mlapp\.venv
+models\linear_regression\.venv
+webapp\.venv
