@@ -14,13 +14,13 @@ Link to the actual repo : [https://github.com/Hyperspectral01/MLOPs_Automation](
 
 The Basic Keywords, and pieces of Information that you must be knowing before beginning this ride.
 
-What is a **CONTAINER**? Anything that runs and has its own environment, and solves the “it works on my computer problem”. That is literally it. Sometimes one might create a piece of code using a library lets say “google-cloud-storage”==3.0.0, 5 years later, or lets say on someone else’s PC, the same piece of code doesnt run, because they might have another version of the same package. So you package everything that that piece of code needs to run anywhere, literally anywhere (images/as long as it has some ram and rom 🙂), inside one file called an **image file.**
+What is a **CONTAINER**? Anything that runs and has its own environment, and solves the “it works on my computer problem”. That is literally it. Sometimes one might create a piece of code using a library lets say “google-cloud-storage”==3.0.0, 5 years later, or lets say on someone else’s PC, the same piece of code doesnt run, because they might have another version of the same package. So you package everything that that piece of code needs to run anywhere, literally anywhere (as long as it has some ram and rom 🙂), inside one file called an **image file.**
 
 Now many of these image files follow some convention to build these images, imagine the chaos, if someone use some software and rules “RULE-1” to create an image, and another person uses “RULE-2” to run those images. But generally most of the softwares out there follow **OCI.** Thats the common “RULE” everyone uses for safety and development**.** Feel free to look up on OCI yourself.
 
 Before it gets confusing, the point being, a piece of code along with its packages → Image File → Container.
 
-So the Container is a running instance of that image. Many containers can be spinned up on one Image. You can also inject different environment variables into these images while making the container. Example: You want a process that prints (images/x→100), so make an image out of the code for that file along with its requirements and everything. Then while running the container, you can inject the value of x through command line arguments. And inside that code you just packaged, you can read the value of x from an environment variable lets say x.
+So the Container is a running instance of that image. Many containers can be spinned up on one Image. You can also inject different environment variables into these images while making the container. Example: You want a process that prints (x→100), so make an image out of the code for that file along with its requirements and everything. Then while running the container, you can inject the value of x through command line arguments. And inside that code you just packaged, you can read the value of x from an environment variable lets say x.
 
 This is how everything works. BTW, you can also make containers without any environment variable injection and it is guaranteed to work. 😃
 
@@ -30,13 +30,13 @@ In this project, we have used a webapp, with a “/” endpoint, and when someon
 
 Calm down. Flask is a library/framework that helps you to make these apps/codes that can use ports and endpoints. Its that simple. The app can also hit its own endpoint, by using the redirect function (images/also from flask). 
 
-So now you have these codes running different endpoints at different ports, at which, when you hit with a web request, returns something, according to REST types (images/MIME types -  look that up on your own), it could be html, json, string, or anything else, BUT JUST NOT A FLOAT NUMBER, that’s annoying i get it.
+So now you have these codes running different endpoints at different ports, at which, when you hit with a web request, returns something, according to REST types (MIME types -  look that up on your own), it could be html, json, string, or anything else, BUT JUST NOT A FLOAT NUMBER, that’s annoying i get it.
 
 | **Return Type** | **Allowed Directly** | **Notes / Fix** |
 | --- | --- | --- |
 | `str` | Yes | Sent as plain text |
-| `dict` | Yes (images/Flask ≥1.1) | Auto-converted to JSON |
-| `tuple` | Yes | `(images/response, status, headers)` |
+| `dict` | Yes (Flask ≥1.1) | Auto-converted to JSON |
+| `tuple` | Yes | `(response, status, headers)` |
 | `Response` object | Yes | Full control over response |
 | `jsonify()` output | Yes | Safest for JSON APIs |
 | `render_template()` | Yes | Renders HTML page |
@@ -67,7 +67,7 @@ But if container-1, had a folder called “myapp” inside which you install the
 
 Now when the container gets deleted, a new container can be spinned, and the same volume can be attached at the same place, where the text file had the count written inside it. Now you can program to start counting from that count. Without volumes, you would delete the container, and hence the text file with it. But now everything is persisted.
 
-Lets level up, now one code wants to hit a ip:port/endpoint where another code is running, the catch is, both are inside their own containers. Now You might say this is gonna work (images/since app1 will hit a request on localhost://5000 where app2 runs on the same device at 5000, and the container also runs at 5000 mapped to the 5000 at which app2 runs). But lets say the guy who is running the image in a container always runs it on different ports for fun, (images/ obviously since the ports are not available). 
+Lets level up, now one code wants to hit a ip:port/endpoint where another code is running, the catch is, both are inside their own containers. Now You might say this is gonna work (since app1 will hit a request on localhost://5000 where app2 runs on the same device at 5000, and the container also runs at 5000 mapped to the 5000 at which app2 runs). But lets say the guy who is running the image in a container always runs it on different ports for fun, (obviously since the ports are not available). 
 
 Then the same guy can also run it on some other machine with internet connectivity, then [localhost](images/http://localhost) will definitely fail, hehe.
 
@@ -75,7 +75,7 @@ The point being there are only 2 things that can remain the same everytime, the 
 
 So gotta make sure that the app2 runs on a container with a particular name. Thats it. Thats the rule we use in DOCKER.
 
-Some apps are **stateful** and the others are **stateless**, like for example a database, that stores something, and to maintain its availability, lets say—keep up with me—we spin up 5 containers of that database application (images/ think of database application like storing some data ), and we do load balancing between them. So one request goes to CONTAINER-1, other goes to CONTAINER-2, and some other might go to CONTAINER-3 and so on. Now the funny thing is, that these CONTAINER-1,2..5 are not in sync with each other. Lets say they have been connected to a common store (images/ like a GCP Bucket , hehe, we will come to that too)  then the, syncing problem will be gone. Then in that case, if one container say blows up, then nothing will be affected.
+Some apps are **stateful** and the others are **stateless**, like for example a database, that stores something, and to maintain its availability, lets say—keep up with me—we spin up 5 containers of that database application (think of database application like storing some data ), and we do load balancing between them. So one request goes to CONTAINER-1, other goes to CONTAINER-2, and some other might go to CONTAINER-3 and so on. Now the funny thing is, that these CONTAINER-1,2..5 are not in sync with each other. Lets say they have been connected to a common store (like a GCP Bucket , hehe, we will come to that too)  then the, syncing problem will be gone. Then in that case, if one container say blows up, then nothing will be affected.
 
 Lets say, only one container of this same database is running, if somehow, in cloud environment its very common, that some hardware gets an issue, and the container running on that hardware will stop/terminate. Then Kubernetes or some other sort of a Manager, will spin up another container/pod/running instance and that will be of no use. Because the data inside old container is lost.
 
@@ -87,7 +87,7 @@ Now we are in the domain of **Kubernetes**.
 
 What is **KUBERNETES**:
 
- The basic definition from google (images/i am lazy):
+ The basic definition from google (i am lazy):
 
 Kubernetes is **an open-source system for automating the deployment, scaling, and management of containerized applications**
 
@@ -114,9 +114,9 @@ Similarly, these are the other features given by Kubernetes:
 | **Resource monitoring** | Tracks CPU, memory, etc. |
 | **Horizontal & vertical scaling** | Scales pods or resources dynamically |
 | **Namespace isolation** | Organizes multi-tenant environments |
-| **Declarative configuration** | Everything defined via YAML (images/infra as code) |
+| **Declarative configuration** | Everything defined via YAML (infra as code) |
 
-Lets say that same container is running on a machine and that has a public ip. Now you want to update the code, so you will every time, create an image, create a container, and deploy that container and hope evrything is fine, everything was manual in this step, but in large scale environments and code bases, doing things manually can break anything. There is no versioning for anything. To go back to a version of code that existed 3 months back, you need **VCS (images/Version Control System)** like **Github**.
+Lets say that same container is running on a machine and that has a public ip. Now you want to update the code, so you will every time, create an image, create a container, and deploy that container and hope evrything is fine, everything was manual in this step, but in large scale environments and code bases, doing things manually can break anything. There is no versioning for anything. To go back to a version of code that existed 3 months back, you need **VCS (Version Control System)** like **Github**.
 
 Even in our project, the VCS will be Github.
 
@@ -134,7 +134,7 @@ So for the example above, the two containers in one pod, are like two containers
 
 But a healthy practice is to keep different containers, different microservices separate from each other rather than tightly coupled.
 
-So you have the CODE now, and an image somewhere, but this thing called a POD might have a bunch of configurations (images/in docker one command was enough)…. hence comes a file type we will use everytime, all the time, and literally most of the time. **YAML FILES**
+So you have the CODE now, and an image somewhere, but this thing called a POD might have a bunch of configurations (in docker one command was enough)…. hence comes a file type we will use everytime, all the time, and literally most of the time. **YAML FILES**
 
 So once we have image, to make this POD, we will be having a YAML file. And as soon as we use kubernetes commands to run this yaml file, it will create this thing called POD.
 
@@ -170,11 +170,11 @@ spec:
 
 ### **2. Service**
 
-Exposes Pods to other Pods (images/or the internet).
+Exposes Pods to other Pods (or the internet).
 
  Acts like a **load balancer / DNS name** for a group of Pods.
 
-Since the pod’s ip’s keep changing, we need a stable IP that connects us to every pod called “X” (images/example given above) hence the selector: app: inside the below code. And just like docker, we can connect the service port to the pod port, wherein the first is stable and the second one keeps changing.
+Since the pod’s ip’s keep changing, we need a stable IP that connects us to every pod called “X” (example given above) hence the selector: app: inside the below code. And just like docker, we can connect the service port to the pod port, wherein the first is stable and the second one keeps changing.
 
 ```yaml
 kind: Service
@@ -194,7 +194,7 @@ spec:
 
 ### **3. ConfigMap**
 
-Stores **non-sensitive** configuration (images/like environment variables, URLs).
+Stores **non-sensitive** configuration (like environment variables, URLs).
 
 Lets you change config without rebuilding the image.
 
@@ -213,7 +213,7 @@ data:
 
 ---
 
- How the other yaml files will be using these variables (images/example):
+ How the other yaml files will be using these variables (example):
 
 ```jsx
 apiVersion: apps/v1
@@ -245,7 +245,7 @@ spec:
 
 Same as ConfigMap but **for passwords, keys, tokens** — base64 encoded.
 
-Now things like usernames and passwords cant be kept as configmaps, since they require higher level of security and also, sometimes, (images/in a public repo), you dont want others to just simply read the files and get your passwords 😂, do you? hence we can set these up directly in console, or with the help of the yaml files given below.
+Now things like usernames and passwords cant be kept as configmaps, since they require higher level of security and also, sometimes, (in a public repo), you dont want others to just simply read the files and get your passwords 😂, do you? hence we can set these up directly in console, or with the help of the yaml files given below.
 
 ```yaml
 kind: Secret
@@ -259,9 +259,9 @@ data:
 
 ---
 
-### **5. PersistentVolumeClaim (images/PVC)**
+### **5. PersistentVolumeClaim (PVC)**
 
-Used to **store data permanently** (images/so Pods don’t lose it when restarted).
+Used to **store data permanently** (so Pods don’t lose it when restarted).
 
 ```yaml
 kind: PersistentVolumeClaim
@@ -345,12 +345,12 @@ So a short summary would be:
 | **Ingress** | Routes external HTTP traffic |
 | **Job/CronJob** | Runs one-time or scheduled tasks |
 
-Also There are 4 service types (images/ the ones we talked about for a stable ip for a bunch of pods ):
+Also There are 4 service types ( the ones we talked about for a stable ip for a bunch of pods ):
 
 ### Service Types
 
-1. ClusterIP (images/default**)** → internal access *within cluster only*.
-2. NodePort → exposes app on every node’s port (images/for local testing).
+1. ClusterIP (default**)** → internal access *within cluster only*.
+2. NodePort → exposes app on every node’s port (for local testing).
 3. LoadBalancer ****→ for cloud; gives **external IP** via cloud load balancer.
 4. ExternalName → maps service name to an *external DNS.*
     
@@ -370,7 +370,7 @@ The exact method of communication is `“http://<service-name>.<namespace>.svc.c
 
 | Part | Meaning |
 | --- | --- |
-| `<service-name>` | **Service name** (images/from your Kubernetes YAML) |
+| `<service-name>` | **Service name** (from your Kubernetes YAML) |
 | `<namespace>` | **Namespace** in which the service is running |
 | `svc` | Indicates this is a **Kubernetes service** |
 | `cluster.local` | The **default internal DNS domain** for all services inside your cluster |
@@ -382,13 +382,13 @@ There are various features of GCP:
 
 Since many people are already familiar with the know-hows of **AWS** Cloud Platform, i have given a brief comparison between `AWS and GCP`:
 
-### Compute (images/running code)
+### Compute (running code)
 
 | AWS | GCP | Use |
 | --- | --- | --- |
-| **EC2** | **Compute Engine** | Virtual machines (images/full control) |
+| **EC2** | **Compute Engine** | Virtual machines (full control) |
 | **Lambda** | **Cloud Functions** | Run short code pieces on events (images/serverless) |
-| **ECS / EKS** | **Cloud Run / GKE (images/Kubernetes Engine)** | Run containers (images/auto or full control) |
+| **ECS / EKS** | **Cloud Run / GKE (Kubernetes Engine)** | Run containers (auto or full control) |
 | **Batch** | **Batch / Dataflow** | Heavy background jobs or data processing |
 
 ---
@@ -397,7 +397,7 @@ Since many people are already familiar with the know-hows of **AWS** Cloud Platf
 
 | AWS | GCP | Use |
 | --- | --- | --- |
-| **S3** | **Cloud Storage** | Store files, datasets, models (images/object storage) |
+| **S3** | **Cloud Storage** | Store files, datasets, models (object storage) |
 | **EBS** | **Persistent Disk** | VM-attached block storage |
 | **EFS** | **Filestore** | Shared file system for multiple VMs/Pods |
 | **Glacier** | **Archive Storage** | Long-term, cheap backup |
@@ -456,17 +456,17 @@ Since many people are already familiar with the know-hows of **AWS** Cloud Platf
 <aside>
 💡
 
-**In our project: we have used GKE (images/Kubernetes Engine), Cloud Storage, Cloud SQL, IAM, Cloud Build from GCP Platform, and additionally also used MLFLow for Model Tracking and Registration, and Prometheus for collecting metrics and monitoring all web apps.**
+**In our project: we have used GKE (Kubernetes Engine), Cloud Storage, Cloud SQL, IAM, Cloud Build from GCP Platform, and additionally also used MLFLow for Model Tracking and Registration, and Prometheus for collecting metrics and monitoring all web apps.**
 
 </aside>
 
 # Understanding CORE concepts used in this project:
 
-**GSA : Google Service Account** : This is the master card that has various permissions attached to it. It is almost like walking inside a high security building (images/Kubernetes in this case) with a master card in your hand. You can give various permissions to it like Arftifact Registry Administrator, Storage Object User, and so on. 
+**GSA : Google Service Account** : This is the master card that has various permissions attached to it. It is almost like walking inside a high security building (Kubernetes in this case) with a master card in your hand. You can give various permissions to it like Arftifact Registry Administrator, Storage Object User, and so on. 
 
-**KSA : Kubernetes Service Account** : This is like the card that would be used by instances inside the GKE (images/Google Kubernetes Engine). Lets call it a Local card right now. So in the world of google cloud, it is the GSA, but as soon as you go to the console and use GKE services, inside that world only KSA works, not GSA. So now if a pod wants to access a storage device from google cloud, like lets say, a bucket, then KSA has to be somehow linked to GSA so that the permissions that a GSA has can be used by a KSA. Keep that idea hanging for a second.
+**KSA : Kubernetes Service Account** : This is like the card that would be used by instances inside the GKE (Google Kubernetes Engine). Lets call it a Local card right now. So in the world of google cloud, it is the GSA, but as soon as you go to the console and use GKE services, inside that world only KSA works, not GSA. So now if a pod wants to access a storage device from google cloud, like lets say, a bucket, then KSA has to be somehow linked to GSA so that the permissions that a GSA has can be used by a KSA. Keep that idea hanging for a second.
 
-**Namespace:** To make logical divisions of all your resources inside a GKE cluster (images/ which might have pods for website frontend and might also have pods for database, and also pods for machine learning models, so many pods), we use something called a Namespace. It is like creating a Virtual Cluster inside a GKE cluster to keep things tidy and clean. So now, the Secrets, ConfigMaps, and even KSA (images/ back to it hehe ) remain separate in separate namespaces. But we can still have the same GSA.
+**Namespace:** To make logical divisions of all your resources inside a GKE cluster ( which might have pods for website frontend and might also have pods for database, and also pods for machine learning models, so many pods), we use something called a Namespace. It is like creating a Virtual Cluster inside a GKE cluster to keep things tidy and clean. So now, the Secrets, ConfigMaps, and even KSA ( back to it hehe ) remain separate in separate namespaces. But we can still have the same GSA.
 
 Now keep up, remember we talked about the local card and master card, and we talked about trying to somehow link our KSA in a particular namespace to a GSA, is happens with something called a **Workload Identity Binding.** 
 
@@ -474,9 +474,9 @@ It is a **2-step process.**
 
 ```
 Just remember, when it is someone trying to contact the GCP services like buckets or something, it is a 2 step process.
-0. You would already have GSA (images/Google service account) (images/that is your master card) -> This can be created from GCP UI and various permissions can be provided
-1. Create a KSA (images/thats like your namespace scoped card) and add an annotation (images/the link/ the wire between the two cards) (images/can be done as yaml or commands)
-2. Authorise workload identity from the GSA side (images/done using commands)
+0. You would already have GSA (Google service account) (that is your master card) -> This can be created from GCP UI and various permissions can be provided
+1. Create a KSA (thats like your namespace scoped card) and add an annotation (the link/ the wire between the two cards) (can be done as yaml or commands)
+2. Authorise workload identity from the GSA side (done using commands)
 ```
 
 ![image.png](images/image.png)
@@ -485,17 +485,17 @@ But what if a pod running inside a GKE wants a permission to delete/create anoth
 
 What permission would it need and where do you get it? GSA can only give permissions to the things involving google cloud as a whole: like buckets and databases and artifacts, all of which are separate things in GCP.
 
-But for a situation such as this, GKE has got its own roles system. So basically a KSA can be created, and then certain roles can be given to it by GKE (images/ for functioning within GKE ), and optionally a KSA can be linked to GSA as well to grant it permissions over google cloud objects.
+But for a situation such as this, GKE has got its own roles system. So basically a KSA can be created, and then certain roles can be given to it by GKE ( for functioning within GKE ), and optionally a KSA can be linked to GSA as well to grant it permissions over google cloud objects.
 
 Now, anyone inside this GKE cluster using that KSA, will have all its benefits including the GSA permissions if attached and also the GKE roles to manipulate things inside GKE.
 
-This process of giving of roles to KSA by GKE is called **RBAC (images/ Role Based Access Control )** and is outlined below:
+This process of giving of roles to KSA by GKE is called **RBAC ( Role Based Access Control )** and is outlined below:
 
 ```yaml
 And when it is that you want to manipulate and play around with pods using other pods, then the pods who would be creating or restarting those other pods would require certain permissions. So hehe, basically a 3 step process.
-0. Create a KSA (images/which is your namespace scoped card) (images/can be done as yaml or commands) [and then optionally an annotation but that is not required]
-1. Create a ROLE that gets access to certain actions and resources (images/can be done as yaml or commands)
-2. Create a ROLEBINDING that binds the above created ROLE to the KSA (images/can be done as yaml or commands)
+0. Create a KSA (which is your namespace scoped card) (can be done as yaml or commands) [and then optionally an annotation but that is not required]
+1. Create a ROLE that gets access to certain actions and resources (can be done as yaml or commands)
+2. Create a ROLEBINDING that binds the above created ROLE to the KSA (can be done as yaml or commands)
 ```
 
 But no matter how you create the KSA, and/or the annotations and role bindings, through the yaml or the commands, finally the KSA name should be mentioned in the yaml files of the individual pods that want to use it.
@@ -518,7 +518,7 @@ These are:
 | `logging-write` | Send logs to Cloud Logging |
 | `monitoring` | Send metrics to Cloud Monitoring |
 | `bigquery` | Access BigQuery |
-| `cloud-platform` | Full access to all GCP APIs (images/best for flexibility) |
+| `cloud-platform` | Full access to all GCP APIs (best for flexibility) |
 
 We have to make sure that our nodes in our cluster are cloud-platform scoped…. hence it is free to use any resources and will not be blocked by GKE itself.
 
@@ -560,21 +560,21 @@ There are **two namespaces** in the GKE cluster:
 
 The **Features** of the project:
 
-1. The User will be able to correct the predicted prices which will then be taken into the preprocessing step and then finally into the versioned dataset step. (images/ **Evolving** models )
+1. The User will be able to correct the predicted prices which will then be taken into the preprocessing step and then finally into the versioned dataset step. ( **Evolving** models )
 2. If we wish to bring **another model** into the picture, we can also make a separate folder in the models folder of the repo, and give it the necessary file like yaml files and retraining files, so it will automatically create an experiment related to that model and train every model separately.
 3. Attention has been given to **versioning of datasets** and also no model is trained on the same data twice.
 4. Variables like **Batch size** and **train_test_split** are directly mentioned in the ConfigMap-1 which can be changed and it will be taken into account by the Data Preprocessor.
 5. Data can also be **uploaded** directly to GCS.
 6. **MLFlow** is used to register models, track them, and each version is also given tags to mention the version of the dataset that it has been trained on.
 7. **Prometheus** has been used to scrape metrics from the /metrics endpoint of webapp, mlapp, and dbapp.
-8. External IP’s has been given to MLFlow and webapp via an **Ingress** for each of them, (images/type nginx for mlflow) and Prometheus service is of type load-balancer hence giving it a **public IP.**
+8. External IP’s has been given to MLFlow and webapp via an **Ingress** for each of them, (type nginx for mlflow) and Prometheus service is of type load-balancer hence giving it a **public IP.**
 9. Both the pipelines are made to **trigger on the same repo but on different folder**, hence maintaining separation of concerns.
-10. Stateful pods like those of mlflow are also taken into account by connecting it to a **PostgreSQL** instance for metadata storage and to a bucket (images/ bucket-3 ) for **artifacts storage.**
+10. Stateful pods like those of mlflow are also taken into account by connecting it to a **PostgreSQL** instance for metadata storage and to a bucket ( bucket-3 ) for **artifacts storage.**
 11. Both the web and ml spaces are kept different via namespaces **ml** and **web.**
 12. **Secrets** have been maintained for PostgreSQL URI and MongoDB URI, so that usernames and passwords remain safe.
 13. Scanning across all runs and models so far, we take the **best model for inference from mlflow.**
 
-## Steps (images/Completely reproducible)
+## Steps (Completely reproducible)
 
 ## 🎥 Watch the Demo
 
@@ -603,8 +603,8 @@ The **Features** of the project:
     
     `PROJECT_ID: <your project id>`
     
-2. **MONGODB SETUP**: First login to [https://www.mongodb.com/](images/https://www.mongodb.com/) MongoDB database and go to clusters and create a free cluster (images/ one free cluster can be created ). Then go to “Clusters” on left hand side and then click on “Connect”→”app” → store your MONGO_URI as mentioned in step-1. Then click on “Browse Collections”, then “Create a new database” and give a name to the database. Store this name as well. Then create 2 empty collections inside that Database, and store their names also. Then under “Networks Access” tab→”IP ACCESS LIST”→ “From anywhere” /  “0.0.0.0” rule to that cluster so that anyone can contact that database. Also go to “Database Users” , then add your username and password and make sure you give the role “**readWriteAnyDatabase**@admin”. Make sure to add the user_id and password inside the mongo_uri. (images/ NOTE: MAKE SURE TO NOT INCLUDE @ IN THE PASSWORDS SINCE THEY WILL HAVE TO BE ESCAPED IN THE URI OTHERWISE )
-3. **CREATE A PROJECT**: Go to GCP console dashboard and then login. Then Create a new project, it will then generate a new project name from the given project name (images/ because it has to be unique ).  After creating this new project you will be able to see on the top left hand side your project name. Click there and copy and store your full project id. 
+2. **MONGODB SETUP**: First login to [https://www.mongodb.com/](images/https://www.mongodb.com/) MongoDB database and go to clusters and create a free cluster ( one free cluster can be created ). Then go to “Clusters” on left hand side and then click on “Connect”→”app” → store your MONGO_URI as mentioned in step-1. Then click on “Browse Collections”, then “Create a new database” and give a name to the database. Store this name as well. Then create 2 empty collections inside that Database, and store their names also. Then under “Networks Access” tab→”IP ACCESS LIST”→ “From anywhere” /  “0.0.0.0” rule to that cluster so that anyone can contact that database. Also go to “Database Users” , then add your username and password and make sure you give the role “**readWriteAnyDatabase**@admin”. Make sure to add the user_id and password inside the mongo_uri. ( NOTE: MAKE SURE TO NOT INCLUDE @ IN THE PASSWORDS SINCE THEY WILL HAVE TO BE ESCAPED IN THE URI OTHERWISE )
+3. **CREATE A PROJECT**: Go to GCP console dashboard and then login. Then Create a new project, it will then generate a new project name from the given project name ( because it has to be unique ).  After creating this new project you will be able to see on the top left hand side your project name. Click there and copy and store your full project id. 
 4. **ENABLE API’S** : Then briefly go to the cloud console shell in the top right hand side corner and run the following command to enable API for certain services. It makes those services literally accessible to us.
 
 ```bash
@@ -613,19 +613,19 @@ The **Features** of the project:
 #If during the course of the entire setup a service has to be enabled, it will pop up on the UI and it can be enabled manually on the UI or through the command line
 
 gcloud services enable \
-[container.googleapis.com](images/http://container.googleapis.com/) \
-[cloudbuild.googleapis.com](images/http://cloudbuild.googleapis.com/) \
-[iam.googleapis.com](images/http://iam.googleapis.com/) \
-[cloudresourcemanager.googleapis.com](images/http://cloudresourcemanager.googleapis.com/) \
-[sqladmin.googleapis.com](images/http://sqladmin.googleapis.com/) \
-[run.googleapis.com](images/http://run.googleapis.com/) \
-[secretmanager.googleapis.com](images/http://secretmanager.googleapis.com/) \
-[artifactregistry.googleapis.com](images/http://artifactregistry.googleapis.com/) \
-[storage.googleapis.com](images/http://storage.googleapis.com/)
+[container.googleapis.com](http://container.googleapis.com/) \
+[cloudbuild.googleapis.com](http://cloudbuild.googleapis.com/) \
+[iam.googleapis.com](http://iam.googleapis.com/) \
+[cloudresourcemanager.googleapis.com](http://cloudresourcemanager.googleapis.com/) \
+[sqladmin.googleapis.com](http://sqladmin.googleapis.com/) \
+[run.googleapis.com](http://run.googleapis.com/) \
+[secretmanager.googleapis.com](http://secretmanager.googleapis.com/) \
+[artifactregistry.googleapis.com](http://artifactregistry.googleapis.com/) \
+[storage.googleapis.com](http://storage.googleapis.com/)
 
 ```
 
-5. **SETUP POSTGRESQL INSTANCE**: The aim is to create a postgresql instance with a database, and a user id and password, but we have to make sure that it exists in the same vpc as the cluster, so basically the same region, the cluster can be zonal also, so it will work.  Also make sure Private IP access is enabled (images/ it is already ensured in the commands given below). Just run the commands below and it will create postgresql instance with private ip access enabled in the same vpc (images/ default vpc ) as the gke clutser that we will create later. For this entire project we have selected only (images/ Region-us-central1 (Iowa) ),and (images/ zone: us-central1-a )
+5. **SETUP POSTGRESQL INSTANCE**: The aim is to create a postgresql instance with a database, and a user id and password, but we have to make sure that it exists in the same vpc as the cluster, so basically the same region, the cluster can be zonal also, so it will work.  Also make sure Private IP access is enabled ( it is already ensured in the commands given below). Just run the commands below and it will create postgresql instance with private ip access enabled in the same vpc ( default vpc ) as the gke clutser that we will create later. For this entire project we have selected only ( Region-us-central1 (Iowa) ),and ( zone: us-central1-a )
 
 ```bash
 #enabling a few extra services
@@ -656,7 +656,7 @@ gcloud services vpc-peerings list --network=<vpc-name>
 #Also we did create a vpc peering to default network
 #Usually vpc name is default and region is us-central1 and zones can be us-central1a,us-central1-b and so on.
 #That is the difference between networks and zones
-#The postgresql instance is regional (images/ available inside an entire region ), and the cluster that we will create can be regional or zonal
+#The postgresql instance is regional ( available inside an entire region ), and the cluster that we will create can be regional or zonal
 gcloud sql instances create <postrges-instance-name> \
   --database-version=POSTGRES_15 \
   --region=us-central1 \
@@ -668,7 +668,7 @@ gcloud sql instances create <postrges-instance-name> \
   
   
 #This is to get the private IP of the instance, you can also get this through the UI, by searching for "CloudSQL" on the searchbar in the google console"
-gcloud sql instances describe <postgresql-instance-name> --format="value(images/ipAddresses)"
+gcloud sql instances describe <postgresql-instance-name> --format="value(ipAddresses)"
 
 #Make sure to set and store the database name, it will be used to construct the URI
 gcloud sql databases create <your-database-name> \
@@ -689,7 +689,7 @@ Make sure you have this kind of uri created : postgresql://<USER>:<PASSWORD>@<PR
 
 ```
 
-6. **SETUP BUCKETS**: Then again go to the search bar at top of screen and search “Buckets”. Create three new buckets, and since the name of the buckets will be unique throughout GCS, the first part of the name of the bucket will be based on project-id. Then create these buckets store their names. Also in bucket number 2, create 2 folders specifically with the name “versioned” and “instream”. This will be used to store all the preprocessed data, versioned ones in the versioned (images/ according to the batch-size and train-test-split from the configmap-1.yaml) and the ones who do not qualify the batch size yet, go into instream.
+6. **SETUP BUCKETS**: Then again go to the search bar at top of screen and search “Buckets”. Create three new buckets, and since the name of the buckets will be unique throughout GCS, the first part of the name of the bucket will be based on project-id. Then create these buckets store their names. Also in bucket number 2, create 2 folders specifically with the name “versioned” and “instream”. This will be used to store all the preprocessed data, versioned ones in the versioned ( according to the batch-size and train-test-split from the configmap-1.yaml) and the ones who do not qualify the batch size yet, go into instream.
 
 ```bash
 # For an easier covention these names have been chosen
@@ -707,8 +707,8 @@ gcloud iam service-accounts create <your-service-account-name> \
 --display-name="My service account"
 
 # Grant it the Owner role
-gcloud projects add-iam-policy-binding $(images/gcloud config get-value project) \
-  --member="serviceAccount:mygsaaccount@$(images/gcloud config get-value project).iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding $(gcloud config get-value project) \
+  --member="serviceAccount:mygsaaccount@$(gcloud config get-value project).iam.gserviceaccount.com" \
   --role="roles/owner"
 ```
 
@@ -731,12 +731,12 @@ Cloud SQL Admin
 Cloud SQL Client
 Cloud SQL Editor
 Cloud SQL Instance User
-Compute Instance Admin (images/v1)
+Compute Instance Admin (v1)
 Edge Container Zonal Project Viewer
 Environment and Storage Object Administrator
 Environment and Storage Object Viewer
 Firebase Admin
-Integrated Service Telemetry Logs Writer (images/Beta)
+Integrated Service Telemetry Logs Writer (Beta)
 Kubernetes Engine Admin
 Kubernetes Engine Developer
 Logging Admin
@@ -749,7 +749,7 @@ Private Logs Viewer
 Secret Manager Secret Accessor
 Service Account User
 Storage Admin
-Storage Bucket Viewer (images/Beta)
+Storage Bucket Viewer (Beta)
 Storage Object Admin
 Storage Object Creator
 Storage Object User
@@ -766,8 +766,8 @@ GSA="your-service-account@${PROJECT_ID}.iam.gserviceaccount.com"
 ```bash
 #Many of these permissons will be required, many for logging, many for enabling "create dir on push images", many for just pushing the images and so on....
 
-gcloud projects add-iam-policy-binding $(images/gcloud config get-value project) \
-  --member="serviceAccount:mygsaaccount@$(images/gcloud config get-value project).iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding $(gcloud config get-value project) \
+  --member="serviceAccount:mygsaaccount@$(gcloud config get-value project).iam.gserviceaccount.com" \
   --role="roles/owner"
   
  
@@ -817,11 +817,11 @@ done
 # For example the command below can provide the cloudbuild.admin role, [or] you can go to cloudbuild and enable the permissions manually there on the UI.
 ```
 
-9. **CREATE A CLUSTER**: Then create a cluster with 4 nodes and e2-small machine (images/ that was enough for this project, however you can look up the resources tag in each of the files under k8s_ml and k8s_web folder and checkout appropriate resources yourself. ). Also make sure that the region of the cluster is the same as Postgresql Instance that we created in step - 5. Just run the following command:
+9. **CREATE A CLUSTER**: Then create a cluster with 4 nodes and e2-small machine ( that was enough for this project, however you can look up the resources tag in each of the files under k8s_ml and k8s_web folder and checkout appropriate resources yourself. ). Also make sure that the region of the cluster is the same as Postgresql Instance that we created in step - 5. Just run the following command:
 
     Also replace the regions like i said earlier.
 
-  **create cluster (images/empty or with default pool)**
+  **create cluster (empty or with default pool)**
 
 ```bash
 # mlops-cluster is the name of the cluster that you are creating okay?
@@ -864,7 +864,7 @@ gcloud container node-pools create <your-pool-name> \
 kubectl get nodes
 ```
 
-**delete default pool (images/optional but clean)**
+**delete default pool (optional but clean)**
 
 ```bash
 #By default it creates a default pool with limited scope, you delete that
@@ -911,17 +911,17 @@ gcloud compute addresses list --global | grep webapp-ip
 13. **GIT CLONE**: Now go to VSCode or any code editor , and run 
 
 ```bash
-git clone [https://github.com/Hyperspectral01/MLOPs_Automation.git](images/https://github.com/Hyperspectral01/MLOPs_Automation.git)
+git clone [https://github.com/Hyperspectral01/MLOPs_Automation.git](https://github.com/Hyperspectral01/MLOPs_Automation.git)
 ```
 
 14. **PROJECT-STRUCTURE**: The project directory clearly is self explanatory. There are two cloudbuild.yaml files , cloudbuild_1.yaml for ml pipeline, and cloudbuild_2.yaml for web pipeline. Also k8s_ml and k8s_web are kubernetes yaml files for the two pipelines and these are clearly separated in the triggers as we shall see later.
 15. **CHANGE CONFIGMAPS**: Go to configmap_1.yaml in k8s_ml and configmap_2.yaml in k8s_web and substitute all the varirables that you have stored so far  there.
-16. **CHANGE KSA’S**: Then go to ksa.yaml in both k8s_ml and k8s_web and change the “[iam.gke.io/gcp-service-account](images/http://iam.gke.io/gcp-service-account)” field there and set to your stored GSA above in step-7.
-17. **CHANGE IMAGE TAGS**: Now for files cronjob.yaml,linear_regression.yaml and mlflow.yaml change the image: tag value in that, it will be of the format [gcr.io/<project-id>/](images/http://gcr.io/<project-id>/tag)<tag like this is my variable, or mlflow-server:$SHORT_SHA and so on.> JUST CHANGE THE PROJECT ID AND REPLACE IT WITH YOUR PROJECT ID. In this case my project id was : mlops-476802, so just simply replace that part with your project id.
+16. **CHANGE KSA’S**: Then go to ksa.yaml in both k8s_ml and k8s_web and change the “[iam.gke.io/gcp-service-account](http://iam.gke.io/gcp-service-account)” field there and set to your stored GSA above in step-7.
+17. **CHANGE IMAGE TAGS**: Now for files cronjob.yaml,linear_regression.yaml and mlflow.yaml change the image: tag value in that, it will be of the format [gcr.io/<project-id>/](http://gcr.io/<project-id>/tag)<tag like this is my variable, or mlflow-server:$SHORT_SHA and so on.> JUST CHANGE THE PROJECT ID AND REPLACE IT WITH YOUR PROJECT ID. In this case my project id was : mlops-476802, so just simply replace that part with your project id.
 18. **CHANGE IMAGE TAGS**: Do the same thing as step-17 with files dbapp.yaml,webapp.yaml and mlapp.yaml files under k8s_web directory.
 19. **CHANGE CLOUDBUILD_1.YAML** : Now go to cloudbuild_1.yaml and click ctrl+F, then find “mlops-476802” and replace all occurences with your <project-id>. and then at the bottom of the file, change the susbtitutions according to whatever created above.
 20. **CHANGE CLOUDBUILD_2.YAML** : Do the same as step-18 but with the cloudbuild_2.yaml file
-21. **CREATE A GIT REPO**: Now go to your github account and create a new repository with some name and make sure there is not [README.md](images/http://README.md) file in it. then copy the url of the git repo and….
+21. **CREATE A GIT REPO**: Now go to your github account and create a new repository with some name and make sure there is not [README.md](http://README.md) file in it. then copy the url of the git repo and….
 22. **PUSH CHANGED REPO TO GITHUB**: Now go to terminal of IDE and run the commands
 
 ```bash
@@ -967,7 +967,7 @@ git push origin main
     `extra_files/**`
     
 
-Then go to `Configuration : Cloud Build Configuration (images/yaml or json)`
+Then go to `Configuration : Cloud Build Configuration (yaml or json)`
 
 `Location: Repository`
 
@@ -1049,7 +1049,7 @@ kubectl rollout restart deployment -n <namespace>
 kubectl delete pods --all -n <namespace>
 ```
 
-30. **WHAT CRONJOBS WILL DO?**: This will immediately restart everything in your namespaces with refreshed version of KSA (images/called etags). Also the cronjobs will not start immediately, but rather they will run on their next scheduled run.
+30. **WHAT CRONJOBS WILL DO?**: This will immediately restart everything in your namespaces with refreshed version of KSA (called etags). Also the cronjobs will not start immediately, but rather they will run on their next scheduled run.
 31. **GET IP:** To get the IP of webapp, simply run command: 
 
 ```bash
@@ -1093,7 +1093,7 @@ kubectl logs <pod-id> -n <namespace>
 kubectl delete pod <pod-id> -n <namespace>
 
 #create a one-time job from a cronjob already created to check how it is working
-kubectl create job --from=cronjob/<cronjob-name> <cronjob-name>-manual-$(images/date +%s) -n <namespace>
+kubectl create job --from=cronjob/<cronjob-name> <cronjob-name>-manual-$(date +%s) -n <namespace>
 
 #delete a deployment
 kubectl delete deployment <deployment-name> -n <namespace>
@@ -1128,36 +1128,36 @@ kubectl get ingress -n <namespace>
 Prometheus metrics being scraped from **webapp**:
 
 ```python
-PREDICTION_REQUESTS = Counter(images/'prediction_requests_total', '...')
-CORRECTION_REQUESTS = Counter(images/'correction_requests_total', '...')
-PREDICTION_LATENCY = Histogram(images/'prediction_latency_seconds', '...')
-LAST_PREDICTED_PRICE = Gauge(images/'last_predicted_price', '...')
-ERROR_COUNT = Counter(images/'error_count_total', '...')
+PREDICTION_REQUESTS = Counter('prediction_requests_total', '...')
+CORRECTION_REQUESTS = Counter('correction_requests_total', '...')
+PREDICTION_LATENCY = Histogram('prediction_latency_seconds', '...')
+LAST_PREDICTED_PRICE = Gauge('last_predicted_price', '...')
+ERROR_COUNT = Counter('error_count_total', '...')
 ```
 
 Prometheus metrics being scraped from **dbapp**:
 
 ```python
-STORE_REQUESTS = Counter(images/'store_requests_total', '...')
-RETRIEVE_REQUESTS = Counter(images/'retrieve_requests_total', '...')
-STORE_LATENCY = Histogram(images/'store_latency_seconds', '...')
-RETRIEVE_LATENCY = Histogram(images/'retrieve_latency_seconds', '...')
-DOCUMENTS_INSERTED = Counter(images/'documents_inserted_total', '...')
-ERROR_COUNT = Counter(images/'db_errors_total', '...')
-LAST_HEALTH_STATUS = Gauge(images/'mongo_health_status', '...')
-DB_CONNECTIONS = Gauge(images/'mongo_active_connections', '...')
+STORE_REQUESTS = Counter('store_requests_total', '...')
+RETRIEVE_REQUESTS = Counter('retrieve_requests_total', '...')
+STORE_LATENCY = Histogram('store_latency_seconds', '...')
+RETRIEVE_LATENCY = Histogram('retrieve_latency_seconds', '...')
+DOCUMENTS_INSERTED = Counter('documents_inserted_total', '...')
+ERROR_COUNT = Counter('db_errors_total', '...')
+LAST_HEALTH_STATUS = Gauge('mongo_health_status', '...')
+DB_CONNECTIONS = Gauge('mongo_active_connections', '...')
 ```
 
 Prometheus metrics being scraped from **mlapp**:
 
 ```python
-prediction_counter = Counter(images/'prediction_requests_total', '...', ['status', 'experiment'])
-prediction_latency = Histogram(images/'prediction_latency_seconds', '...', ['experiment'])
-prediction_errors = Counter(images/'prediction_errors_total', '...', ['error_type', 'experiment'])
-active_requests = Gauge(images/'active_prediction_requests', '...')
-model_load_time = Gauge(images/'model_load_time_seconds', '...')
-last_prediction_time = Gauge(images/'last_prediction_timestamp', '...')
-predicted_price_histogram = Histogram(images/'predicted_price_dollars', '...')
+prediction_counter = Counter('prediction_requests_total', '...', ['status', 'experiment'])
+prediction_latency = Histogram('prediction_latency_seconds', '...', ['experiment'])
+prediction_errors = Counter('prediction_errors_total', '...', ['error_type', 'experiment'])
+active_requests = Gauge('active_prediction_requests', '...')
+model_load_time = Gauge('model_load_time_seconds', '...')
+last_prediction_time = Gauge('last_prediction_timestamp', '...')
+predicted_price_histogram = Histogram('predicted_price_dollars', '...')
 ```
 
 **NOTE: Also make sure that the dataset that you are uploading to bucket-1 for retraining of any model, that should be of the format given in the repository in the images dir.**
@@ -1200,7 +1200,7 @@ predicted_price_histogram = Histogram(images/'predicted_price_dollars', '...')
 
 ![image.png](images/image%2015.png)
 
-**Queries-fired (images/PromQL):**
+**Queries-fired (PromQL):**
 
 1. **Basic Health Queries:**
 
@@ -1218,33 +1218,33 @@ predicted_price_histogram = Histogram(images/'predicted_price_dollars', '...')
 
 2. **MlApp queries**:
 
-**Total prediction requests (images/overall)**
+**Total prediction requests (overall)**
 
 `prediction_requests_total`
 
 **Prediction requests by status and experiment**
 
-`sum(images/rate(prediction_requests_total[5m])) by (images/status, experiment)`
+`sum(rate(prediction_requests_total[5m])) by (status, experiment)`
 
 **Prediction error rate**
 
-`rate(images/prediction_errors_total[5m])`
+`rate(prediction_errors_total[5m])`
 
 **Prediction errors by type**
 
-`sum(images/rate(prediction_errors_total[5m])) by (images/error_type, experiment)`
+`sum(rate(prediction_errors_total[5m])) by (error_type, experiment)`
 
-**Average prediction latency (images/p50, p95, p99)**
+**Average prediction latency (p50, p95, p99)**
 
-`histogram_quantile(images/0.50, rate(prediction_latency_seconds_bucket[5m]))`
+`histogram_quantile(0.50, rate(prediction_latency_seconds_bucket[5m]))`
 
-`histogram_quantile(images/0.95, rate(prediction_latency_seconds_bucket[5m]))`
+`histogram_quantile(0.95, rate(prediction_latency_seconds_bucket[5m]))`
 
-`histogram_quantile(images/0.99, rate(prediction_latency_seconds_bucket[5m]))`
+`histogram_quantile(0.99, rate(prediction_latency_seconds_bucket[5m]))`
 
 **Average latency by experiment**
 
-`histogram_quantile(images/0.95, sum(rate(prediction_latency_seconds_bucket[5m])) by (images/le, experiment))`
+`histogram_quantile(0.95, sum(rate(prediction_latency_seconds_bucket[5m])) by (le, experiment))`
 
 **Current active requests**
 
@@ -1254,15 +1254,15 @@ predicted_price_histogram = Histogram(images/'predicted_price_dollars', '...')
 
 `model_load_time_seconds`
 
-**Last prediction timestamp (images/seconds since epoch)**
+**Last prediction timestamp (seconds since epoch)**
 
 `last_prediction_timestamp`
 
 **Predicted price distribution**
 
-`histogram_quantile(images/0.50, rate(predicted_price_dollars_bucket[5m]))`
+`histogram_quantile(0.50, rate(predicted_price_dollars_bucket[5m]))`
 
-`histogram_quantile(images/0.95, rate(predicted_price_dollars_bucket[5m]))`
+`histogram_quantile(0.95, rate(predicted_price_dollars_bucket[5m]))`
 
 ![image.png](images/image%2018.png)
 
@@ -1276,9 +1276,9 @@ predicted_price_histogram = Histogram(images/'predicted_price_dollars', '...')
 
 `store_requests_total`
 
-**Store request rate (images/per second)**
+**Store request rate (per second)**
 
-`rate(images/store_requests_total[5m])`
+`rate(store_requests_total[5m])`
 
 **Total retrieve requests**
 
@@ -1286,21 +1286,21 @@ predicted_price_histogram = Histogram(images/'predicted_price_dollars', '...')
 
 **Retrieve request rate**
 
-`rate(images/retrieve_requests_total[5m])`
+`rate(retrieve_requests_total[5m])`
 
-**Store operation latency (images/p50, p95, p99)**
+**Store operation latency (p50, p95, p99)**
 
-`histogram_quantile(images/0.50, rate(store_latency_seconds_bucket[5m]))`
+`histogram_quantile(0.50, rate(store_latency_seconds_bucket[5m]))`
 
-`histogram_quantile(images/0.95, rate(store_latency_seconds_bucket[5m]))`
+`histogram_quantile(0.95, rate(store_latency_seconds_bucket[5m]))`
 
-`histogram_quantile(images/0.99, rate(store_latency_seconds_bucket[5m]))`
+`histogram_quantile(0.99, rate(store_latency_seconds_bucket[5m]))`
 
 **Retrieve operation latency**
 
-`histogram_quantile(images/0.50, rate(retrieve_latency_seconds_bucket[5m]))`
+`histogram_quantile(0.50, rate(retrieve_latency_seconds_bucket[5m]))`
 
-`histogram_quantile(images/0.95, rate(retrieve_latency_seconds_bucket[5m]))`
+`histogram_quantile(0.95, rate(retrieve_latency_seconds_bucket[5m]))`
 
 **Total documents inserted**
 
@@ -1308,7 +1308,7 @@ predicted_price_histogram = Histogram(images/'predicted_price_dollars', '...')
 
 **Insert rate**
 
-`rate(images/documents_inserted_total[5m])`
+`rate(documents_inserted_total[5m])`
 
 **Database errors**
 
@@ -1316,9 +1316,9 @@ predicted_price_histogram = Histogram(images/'predicted_price_dollars', '...')
 
 **Error rate**
 
-`rate(images/db_errors_total[5m])`
+`rate(db_errors_total[5m])`
 
-**MongoDB health status (images/1 = healthy, 0 = unhealthy)**
+**MongoDB health status (1 = healthy, 0 = unhealthy)**
 
 `mongo_health_status`
 
